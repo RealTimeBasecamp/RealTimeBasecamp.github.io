@@ -14,8 +14,8 @@
 * [x] [Feat-01: Homepage (Phase 1)](./features/01-homepage.md)
 * [ ] [Feat-02: Go live](./features/02-go-live.md) (waits for Feat-07; don't push `bf8d9e4` alone)
 * [-] [Feat-03: Bio page](./features/03-bio.md) (superseded: the homepage is the bio, see Feat-07)
-* [ ] [Feat-09: Site navigation and page structure](./features/09-navigation.md) (active: sets page priority)
-* [ ] [Feat-07: Homepage redesign](./features/07-homepage-redesign.md) (round 2 + 2026-10-30 notes waiting)
+* [x] [Feat-09: Site navigation and page structure](./features/09-navigation.md) (committed on dev `521d47b`)
+* [ ] [Feat-07: Homepage redesign](./features/07-homepage-redesign.md) (active: round 2 + 2026-10-30 notes)
 * [ ] [Feat-08: Mentee world map](./features/08-mentee-map.md) (after Feat-07 round 2)
 * [ ] [Feat-04: Products page](./features/04-products.md)
 * [ ] [Feat-05: Blog](./features/05-blog.md)
@@ -69,8 +69,8 @@
 # Active Handoff Buffer
 ```json
 {
-  "active_feature_id": "09",
-  "note_2026_10_30": "Site menu built on dev (src/data/nav.ts, SiteMenu.astro, stubs incl. products/[slug]), uncommitted. Feat-07 notes logged, not started. Don't use portfolio PDF projects; the user plans portfolio content.",
+  "active_feature_id": "07",
+  "note_2026_10_30": "Committed on dev (not pushed, main untouched): 9e7275d homepage redesign, 521d47b site navigation + stubs, 57fbef7 skills/tracking, then the nav panel two-layer style. Nav (Feat-09) done apart from the production go-live call. Dev server may still be running on :4399; screenshots via puppeteer-core + Edge in the scratchpad (not durable). Next: homepage notes in features/07-homepage-redesign.md (Round 2 to-do + 2026-10-30 notes) to nail down styles. Don't use portfolio PDF projects; the user plans portfolio content.",
   "current_git_branch": "dev",
   "last_known_ast_modification": "Homepage redesign built and uncommitted on top of bf8d9e4 (not pushed). Builds clean; 320/425/1440 checked. Stub pages products/blog/contact are in the working tree but belong on wip/pages. Tracking files and .claude/skills also uncommitted.",
   "immediate_next_step": "Wait for the user's go-ahead, then work the 'Round 2 to-do' list in features/07-homepage-redesign.md against the Global notes here. Then get answers to its 'Open questions', apply them, run conventional-code, then commit on approval: redesign + tracking to main, stubs to a new wip/pages branch. git: %LOCALAPPDATA%\\GitHubDesktop\\app-3.6.10\\resources\\app\\git\\cmd\\git.exe"

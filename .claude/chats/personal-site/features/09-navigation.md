@@ -44,6 +44,8 @@
 * [x] Panel items all one size (Linear sizing): 15rem x 6rem, one-line label, two-line clamped
   description. Cheatsheet uses `menuLabel` "Blueprint Variables Cheatsheet". No single-line link
   column until there are more options (user).
+* [x] Panel card in two layers like Linear: outer frame (--ground-lift) + darker inner section
+  (--ground, hairline border), vertical hairlines between items.
 * [ ] Production today: Portfolio + Products/Mentoring panels (EMSP, MentorCruise); no Contact button
   or phone dropdown until those pages are live. User to confirm when merging.
 * [ ] Commit on dev (user approval)
