@@ -15,3 +15,7 @@ npm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# Source material for the tracking files (CV with referees' emails, a ~60MB
+# portfolio PDF): local only, this repo is public
+.claude/chats/*/context/

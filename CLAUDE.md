@@ -11,9 +11,21 @@ The Editor Menu Shelf Pro docs are a separate repo
 ## Publishing
 - Pushing to `main` deploys (`.github/workflows/deploy.yml`, Pages source
   "GitHub Actions"). Only finished pages go on `main`.
-- Unfinished pages live on the `wip/pages` branch and are merged when done.
+- Work in progress lives on the `dev` branch; each page is merged to `main`
+  when it's finished. The masthead dropdown (`src/data/nav.ts`) lists a page
+  publicly only once its `live` flag is set; the dev server shows them all.
 - Content that must never go live (e.g. the Epic badge slot) renders only
   under `import.meta.env.DEV`.
+
+## Tracking work
+- All features and development follow the `token-saver` skill
+  (`.claude/skills/token-saver/`). Progress lives in
+  `.claude/chats/personal-site/`: read `orchestrator.md` first, update the
+  active feature file as work lands, and keep its Active Handoff Buffer current.
+- Run the `conventional-code` skill (`.claude/skills/conventional-code/`) on
+  all work before every commit.
+- Both skills are copies from `D:\Portfolio\WebDev\best-practices-skills`.
+  Change them there first, then re-copy.
 
 ## Code organisation
 Same rules as the plugin docs site's homepage:
