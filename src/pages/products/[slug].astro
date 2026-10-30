@@ -1,0 +1,27 @@
+---
+/**
+ * One page per product that has a `slug` in src/data/products.ts. Stub:
+ * content still to be planned
+ * (tracked in .claude/chats/personal-site/features/04-products.md).
+ * Lives on the dev branch, never main, until it is finished.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Section from '../../components/Section.astro';
+import { PRODUCTS, type Product } from '../../data/products';
+
+export const getStaticPaths = (() =>
+	PRODUCTS.filter((item) => item.slug).map((item) => ({
+		params: { slug: item.slug },
+		props: { item },
+	}))) satisfies GetStaticPaths;
+
+interface Props {
+	item: Product;
+}
+const { item } = Astro.props;
+---
+
+<BaseLayout title={`${item.title} | Rob Fraser`} description={item.text ?? item.title}>
+	<Section title={item.title} />
+</BaseLayout>

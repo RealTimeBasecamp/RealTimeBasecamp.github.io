@@ -1,0 +1,162 @@
+---
+/**
+ * Small-screen navigation: one dropdown of the master pages from
+ * src/data/nav.ts. The button names the page you're on and the list shows
+ * the others. Open, the button and list read as one panel: same background,
+ * border and width, the list running on from the button's bottom edge.
+ * Shown below 50rem only; SiteNav.astro covers wider screens.
+ *
+ * Contact me is listed only below 25rem, where the masthead hides its
+ * Contact me button for room.
+ */
+import ChevronIcon from '../assets/icons/chevron-down.svg';
+import { CONTACT_LINK, MASTER_PAGES, pageNameFor } from '../data/nav';
+
+const currentLabel = pageNameFor(Astro.url.pathname);
+const others = MASTER_PAGES.filter(({ label }) => label !== currentLabel);
+---
+
+{others.length > 0 && (
+	<nav class="pages" aria-label="Pages">
+		<button class="pages__toggle" type="button" aria-expanded="false" aria-controls="pages-menu">
+			{/* Every label stacked in one cell, only the current one visible, so
+			    the button is as wide as the longest and the list matches it. */}
+			<span class="pages__label">
+				{[currentLabel, ...others.map(({ label }) => label)].map((label, i) => (
+					<span aria-hidden={i > 0 ? 'true' : undefined}>{label}</span>
+				))}
+			</span>
+			<ChevronIcon class="pages__chevron" aria-hidden="true" />
+		</button>
+		<ul class="pages__menu" id="pages-menu" hidden>
+			{others.map(({ label, href }) => (
+				<li class:list={{ 'pages__item--contact': href === CONTACT_LINK?.href }}>
+					<a class="pages__link" href={href}>{label}</a>
+				</li>
+			))}
+		</ul>
+	</nav>
+)}
+
+<style>
+	.pages {
+		position: relative;
+		--pages-pad: 0.75rem;
+		--pages-radius: 6px;
+	}
+	.pages__toggle {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		height: 2.2rem;
+		padding: 0 0.55rem 0 var(--pages-pad);
+		border: 1px solid transparent;
+		border-radius: var(--pages-radius);
+		background: transparent;
+		color: var(--text-soft);
+		font: inherit;
+		font-size: 0.875rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background-color 0.2s ease, color 0.2s ease;
+	}
+	.pages__toggle:hover {
+		background: rgba(255, 255, 255, 0.08);
+		color: var(--text);
+	}
+	.pages__toggle[aria-expanded='true'] {
+		background: var(--surface);
+		border-color: var(--line);
+		border-radius: var(--pages-radius) var(--pages-radius) 0 0;
+		color: var(--text);
+	}
+	/* All labels share one grid cell; only the first (current page) shows. */
+	.pages__label {
+		display: grid;
+		text-align: left;
+	}
+	.pages__label > span {
+		grid-area: 1 / 1;
+	}
+	.pages__label > span + span {
+		visibility: hidden;
+	}
+	.pages__toggle :global(.pages__chevron) {
+		width: 1rem;
+		height: 1rem;
+		transition: transform 0.2s var(--ease);
+	}
+	.pages__toggle[aria-expanded='true'] :global(.pages__chevron) {
+		transform: rotate(180deg);
+	}
+	/* Overlaps the button's bottom border by 1px, so the two read as one box. */
+	.pages__menu {
+		position: absolute;
+		top: calc(100% - 1px);
+		left: 0;
+		right: 0;
+		margin: 0;
+		padding: 0.25rem 0 0.4rem;
+		list-style: none;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-top: none;
+		border-radius: 0 0 var(--pages-radius) var(--pages-radius);
+		box-shadow: 0 16px 28px rgba(0, 0, 0, 0.3);
+	}
+	.pages__link {
+		display: block;
+		padding: 0.45rem var(--pages-pad);
+		color: var(--text-soft);
+		font-size: 0.875rem;
+		font-weight: 500;
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+	.pages__link:hover {
+		color: var(--accent);
+	}
+	.pages__toggle:focus-visible,
+	.pages__link:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: -2px;
+	}
+	@media (min-width: 25.01rem) {
+		.pages__item--contact { display: none; }
+	}
+	@media (min-width: 50.01rem) {
+		.pages { display: none; }
+	}
+</style>
+
+<script>
+	/* The button toggles the list; Escape, a tap elsewhere or focus leaving
+	   it closes it. */
+	const pages = document.querySelector<HTMLElement>('.pages');
+	const toggle = pages?.querySelector<HTMLButtonElement>('.pages__toggle');
+	const menu = pages?.querySelector<HTMLElement>('.pages__menu');
+
+	if (pages && toggle && menu) {
+		let open = false;
+		const setOpen = (next: boolean) => {
+			open = next;
+			toggle.setAttribute('aria-expanded', String(open));
+			menu.hidden = !open;
+		};
+
+		toggle.addEventListener('click', () => setOpen(!open));
+		document.addEventListener('click', (e) => {
+			if (open && !pages.contains(e.target as Node)) setOpen(false);
+		});
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && open) {
+				setOpen(false);
+				toggle.focus();
+			}
+		});
+		pages.addEventListener('focusout', (e) => {
+			if (!pages.contains(e.relatedTarget as Node)) setOpen(false);
+		});
+	}
+</script>

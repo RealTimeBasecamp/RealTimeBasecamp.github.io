@@ -6,9 +6,15 @@
  *
  * Below 50rem it uses the same geometry as the plugin docs header (3.5rem
  * tall, 1rem padding), so the logo doesn't move between the two sites.
+ *
+ * Right side: the site navigation (SiteNav on desktop, PageMenu below
+ * 50rem), then Contact me, the site's one filled button. Profile icons
+ * live in the footer.
  */
 import Lockup from './Lockup.astro';
-import { SOCIAL_LINKS } from '../data/social';
+import SiteNav from './SiteNav.astro';
+import PageMenu from './PageMenu.astro';
+import { CONTACT_LINK } from '../data/nav';
 ---
 
 <div class="masthead-sentinel" aria-hidden="true"></div>
@@ -16,13 +22,14 @@ import { SOCIAL_LINKS } from '../data/social';
 	<a class="masthead__brand" href="/" aria-label="Real Time Basecamp home">
 		<Lockup />
 	</a>
-	<nav class="masthead__nav" aria-label="Profiles">
-		{SOCIAL_LINKS.map(({ label, href, icon: SocialIcon }) => (
-			<a class="masthead__icon" href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
-				<SocialIcon aria-hidden="true" />
-			</a>
-		))}
-	</nav>
+	<SiteNav />
+	<PageMenu />
+	{CONTACT_LINK && (
+		<>
+			<span class="masthead__divider" aria-hidden="true"></span>
+			<a class="btn btn--primary masthead__contact" href={CONTACT_LINK.href}>{CONTACT_LINK.label}</a>
+		</>
+	)}
 </header>
 
 <style>
@@ -65,36 +72,23 @@ import { SOCIAL_LINKS } from '../data/social';
 		text-decoration: none;
 		margin-right: auto;
 	}
-	.masthead__nav {
-		display: flex;
-		align-items: center;
-		gap: 0.3rem;
-	}
-	.masthead__icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 2.2rem;
-		height: 2.2rem;
-		border-radius: 4px;
-		color: var(--text-soft);
-		transition: background-color 0.3s ease, color 0.3s ease;
-	}
-	.masthead__icon:hover {
-		background: rgba(255, 255, 255, 0.08);
-		color: var(--text);
-	}
-	/* Height only: the MentorCruise mark is wider than it is tall. */
-	.masthead__icon :global(svg) {
-		height: 1.15rem;
-		width: auto;
-		flex-shrink: 0;
+	.masthead__divider {
+		width: 1px;
+		height: 1.25rem;
+		background: var(--line);
 	}
 	@media (max-width: 50rem) {
 		.masthead {
 			height: 3.5rem;
 			padding: 0 1rem;
+			gap: 0.5rem;
 		}
+		.masthead__divider { display: none; }
+	}
+	/* Too narrow for the page menu and the button together; PageMenu lists
+	   Contact me instead. */
+	@media (max-width: 25rem) {
+		.masthead__contact { display: none; }
 	}
 </style>
 
