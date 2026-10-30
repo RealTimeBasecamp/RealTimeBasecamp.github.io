@@ -1,0 +1,198 @@
+---
+/**
+ * Cross-fading review carousel with arrows, dots and arrow-key support.
+ * Adapted from the Editor Menu Shelf Pro site
+ * (src/components/TestimonialCarousel.astro): slides now come from
+ * src/data/testimonials.ts, and the section heading belongs to the page.
+ *
+ * Slides share one grid cell, so the block takes the tallest slide's height
+ * and never jumps between quotes. Auto-advances unless the visitor prefers
+ * reduced motion, and pauses while hovered or focused.
+ */
+import { TESTIMONIALS } from '../data/testimonials';
+---
+
+<div class="quotes" tabindex="0" aria-roledescription="carousel" aria-label="Mentee reviews">
+	<div class="quotes__viewport">
+		{TESTIMONIALS.map(({ quote, name, role }, i) => (
+			<blockquote class:list={['quotes__slide', { 'is-on': i === 0 }]} aria-hidden={i === 0 ? 'false' : 'true'}>
+				<p class="quotes__text">&ldquo;{quote}&rdquo;</p>
+				<footer class="quotes__by">
+					<b>{name}</b>
+					<span>{role}</span>
+				</footer>
+			</blockquote>
+		))}
+	</div>
+
+	<div class="quotes__nav">
+		<button class="quotes__arrow" type="button" data-step="-1" aria-label="Previous review">&#8592;</button>
+		<div class="quotes__dots">
+			{TESTIMONIALS.map((_, i) => (
+				<button
+					class:list={['quotes__dot', { 'is-on': i === 0 }]}
+					type="button"
+					data-goto={i}
+					aria-label={`Review ${i + 1} of ${TESTIMONIALS.length}`}
+					aria-current={i === 0 ? 'true' : 'false'}
+				></button>
+			))}
+		</div>
+		<button class="quotes__arrow" type="button" data-step="1" aria-label="Next review">&#8594;</button>
+	</div>
+</div>
+
+<style>
+	.quotes {
+		border: 1px solid var(--line);
+		border-radius: 12px;
+		background: var(--ground-lift);
+		padding: 2rem 1.5rem 1.25rem;
+	}
+	@media (min-width: 768px) {
+		.quotes { padding: 3rem 3rem 1.5rem; }
+	}
+	.quotes:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+	}
+	.quotes__viewport {
+		display: grid;
+	}
+	/* Centred in the shared cell, so short quotes don't sit above a gap
+	   left by the longest one. */
+	.quotes__slide {
+		grid-area: 1 / 1;
+		align-self: center;
+		margin: 0;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.45s var(--ease), visibility 0.45s;
+		text-align: center;
+	}
+	.quotes__slide.is-on {
+		opacity: 1;
+		visibility: visible;
+	}
+	.quotes__text {
+		margin: 0 auto 1.25rem;
+		max-width: 52ch;
+		font-size: 1.125rem;
+		line-height: 1.55;
+		color: var(--text);
+	}
+	@media (min-width: 768px) {
+		.quotes__text { font-size: 1.25rem; }
+	}
+	.quotes__by {
+		display: grid;
+		gap: 0.1rem;
+		font-size: 0.875rem;
+	}
+	.quotes__by b {
+		color: var(--text);
+		font-weight: 600;
+	}
+	.quotes__by span {
+		color: var(--muted);
+	}
+	.quotes__nav {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		margin-top: 1.75rem;
+	}
+	.quotes__arrow {
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: 50%;
+		border: 1px solid var(--line);
+		background: transparent;
+		color: var(--text-soft);
+		cursor: pointer;
+		font-size: 1rem;
+		line-height: 1;
+		transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+	}
+	.quotes__arrow:hover {
+		border-color: var(--muted);
+		color: var(--text);
+		background: rgba(255, 255, 255, 0.05);
+	}
+	.quotes__dots {
+		display: flex;
+		gap: 0.45rem;
+	}
+	.quotes__dot {
+		width: 0.5rem;
+		height: 0.5rem;
+		padding: 0;
+		border-radius: 50%;
+		border: none;
+		background: var(--line);
+		cursor: pointer;
+		transition: background-color 0.25s ease, transform 0.25s ease;
+	}
+	.quotes__dot:hover { background: var(--muted); }
+	.quotes__dot.is-on {
+		background: var(--accent);
+		transform: scale(1.25);
+	}
+	.quotes__arrow:focus-visible,
+	.quotes__dot:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.quotes__slide { transition: none; }
+	}
+</style>
+
+<script>
+	const DWELL = 8000;
+
+	document.querySelectorAll<HTMLElement>('.quotes').forEach((root) => {
+		const slides = [...root.querySelectorAll<HTMLElement>('.quotes__slide')];
+		const dots = [...root.querySelectorAll<HTMLElement>('.quotes__dot')];
+		if (slides.length < 2) return;
+
+		let current = 0;
+		let timer: number | undefined;
+		const autoplay = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+		const show = (n: number) => {
+			current = (n + slides.length) % slides.length;
+			slides.forEach((s, i) => {
+				s.classList.toggle('is-on', i === current);
+				s.setAttribute('aria-hidden', String(i !== current));
+			});
+			dots.forEach((d, i) => {
+				d.classList.toggle('is-on', i === current);
+				d.setAttribute('aria-current', String(i === current));
+			});
+		};
+		const stop = () => window.clearInterval(timer);
+		const start = () => {
+			stop();
+			if (autoplay) timer = window.setInterval(() => show(current + 1), DWELL);
+		};
+
+		root.querySelectorAll<HTMLElement>('[data-step]').forEach((b) =>
+			b.addEventListener('click', () => { show(current + Number(b.dataset.step)); start(); }));
+		dots.forEach((d) =>
+			d.addEventListener('click', () => { show(Number(d.dataset.goto)); start(); }));
+		root.addEventListener('keydown', (e) => {
+			if (e.key === 'ArrowRight') { show(current + 1); start(); }
+			if (e.key === 'ArrowLeft') { show(current - 1); start(); }
+		});
+
+		/* Hold still while someone is reading or using the controls. */
+		root.addEventListener('mouseenter', stop);
+		root.addEventListener('mouseleave', start);
+		root.addEventListener('focusin', stop);
+		root.addEventListener('focusout', start);
+
+		start();
+	});
+</script>

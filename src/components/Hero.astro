@@ -1,71 +1,87 @@
 ---
 /**
- * Homepage intro: photo, name and title line. The .reveal-N classes stagger
- * the entrance (keyframes in src/styles/base.css).
+ * Homepage intro, laid out like the Editor Menu Shelf Pro hero
+ * (src/components/home/Hero.astro): photo and name, the title line with the
+ * two main calls to action (portfolio, mentoring), then the showreel.
+ * The .reveal-N classes stagger the entrance (keyframes in src/styles/base.css).
  */
-import { Image } from 'astro:assets';
+import Avatar from './Avatar.astro';
+import YouTubeEmbed from './YouTubeEmbed.astro';
 import robFraser from '../assets/rob-fraser.png';
+import { ARTSTATION_URL, MENTORCRUISE_URL, SHOWREEL_ID } from '../data/links';
 ---
 
 <section class="hero gutter">
-	<Image
-		class="hero__photo reveal reveal-1"
-		src={robFraser}
-		alt="Rob Fraser"
-		width={144}
-		height={144}
-		densities={[1, 2]}
-		loading="eager"
-	/>
-	<div class="reveal reveal-2">
+	<div class="hero__id reveal reveal-1">
+		<Avatar class="hero__photo" src={robFraser} alt="Rob Fraser" size={96} loading="eager" />
 		<h1 class="hero__name">Rob Fraser</h1>
-		<p class="hero__role">UE5 Technical Artist | Pipeline | Mentor @ MentorCruise</p>
+	</div>
+
+	<div class="hero__row reveal reveal-2">
+		<p class="hero__tagline">UE5 Technical Artist | Pipeline | Mentor @ MentorCruise</p>
+		<span class="hero__cta">
+			<a class="btn btn--ghost" href={ARTSTATION_URL} target="_blank" rel="noopener noreferrer">View my portfolio &#8594;</a>
+			<a class="btn btn--ghost" href={MENTORCRUISE_URL} target="_blank" rel="noopener noreferrer">Mentoring on MentorCruise &#8594;</a>
+		</span>
+	</div>
+
+	<div class="reveal reveal-3">
+		<YouTubeEmbed id={SHOWREEL_ID} title="Rob Fraser UE5 Generalist Showreel 2026" />
 	</div>
 </section>
 
 <style>
 	.hero {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1.5rem;
 		padding-top: 3.5rem;
-		padding-bottom: 3rem;
-	}
-	@media (min-width: 36rem) {
-		.hero {
-			flex-direction: row;
-			align-items: center;
-			gap: 2rem;
-		}
+		padding-bottom: 1rem;
 	}
 	@media (min-width: 992px) { .hero { padding-top: 5.5rem; } }
 
-	.hero__photo {
-		width: 7rem;
-		height: 7rem;
-		flex-shrink: 0;
-		border-radius: 50%;
-		object-fit: cover;
-		border: 3px solid var(--accent);
+	.hero__id {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		margin-bottom: 1.5rem;
 	}
-	@media (min-width: 36rem) {
-		.hero__photo {
-			width: 9rem;
-			height: 9rem;
-		}
+	/* :global because the class lands on Avatar's root, outside this scope. */
+	@media (max-width: 35.99rem) {
+		.hero :global(.hero__photo) { --avatar-size: 4.5rem; }
 	}
 
 	.hero__name {
 		font-size: clamp(2.5rem, 6vw, 4rem);
 		line-height: 1.06;
 		letter-spacing: -0.025em;
-		margin: 0 0 0.75rem;
 	}
-	.hero__role {
+
+	/* Same rule as Section.astro's .lede: buttons on the right from tablet up. */
+	.hero__row {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.25rem;
+		margin-bottom: 2.75rem;
+	}
+	@media (min-width: 48rem) {
+		.hero__row {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 2.5rem;
+		}
+	}
+	.hero__tagline {
 		margin: 0;
+		max-width: 58ch;
 		color: var(--text-soft);
 		font-size: 1.0625rem;
 		line-height: 1.6;
+	}
+	.hero__cta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+		flex-shrink: 0;
 	}
 </style>

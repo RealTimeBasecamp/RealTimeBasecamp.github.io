@@ -1,13 +1,18 @@
 ---
 /**
- * Homepage. This file is only the running order of the page: the shell is
- * src/layouts/BaseLayout.astro, the cards are src/data/homeCards.ts.
+ * Homepage, which is also the bio. This file is only the running order of
+ * the page: the shell is src/layouts/BaseLayout.astro, the words and logos
+ * are in src/data/.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
-import BentoGrid from '../components/BentoGrid.astro';
-import Card from '../components/Card.astro';
-import { HOME_CARDS } from '../data/homeCards';
+import Section from '../components/Section.astro';
+import StatRings from '../components/StatRings.astro';
+import LogoGrid from '../components/LogoGrid.astro';
+import TestimonialCarousel from '../components/TestimonialCarousel.astro';
+import ProductList from '../components/ProductList.astro';
+import { CLIENTS, EXPERIENCE, SOFTWARE } from '../data/logos';
+import { MENTORCRUISE_URL } from '../data/links';
 ---
 
 <BaseLayout
@@ -15,7 +20,37 @@ import { HOME_CARDS } from '../data/homeCards';
 	description="Rob Fraser, UE5 Technical Artist, pipeline developer and mentor. Creator of Editor Menu Shelf Pro for Unreal Engine 5."
 >
 	<Hero />
-	<BentoGrid>
-		{HOME_CARDS.map((card) => <Card {...card} />)}
-	</BentoGrid>
+
+	<Section>
+		<StatRings />
+	</Section>
+
+	<Section title="Experience." id="experience">
+		<LogoGrid items={EXPERIENCE} wide />
+	</Section>
+
+	<Section title="Clients." id="clients">
+		<LogoGrid items={CLIENTS} />
+	</Section>
+
+	<Section title="Software." id="software">
+		<LogoGrid items={SOFTWARE} />
+	</Section>
+
+	<Section
+		title="What my mentees say."
+		id="mentoring"
+		cta={{ href: MENTORCRUISE_URL, label: 'View my MentorCruise profile', external: true }}
+	>
+		<Fragment slot="intro">Reviews from mentoring sessions on MentorCruise.</Fragment>
+		<TestimonialCarousel />
+	</Section>
+
+	<Section title="Products." id="products">
+		<ProductList />
+	</Section>
+
+	<Section title="Blog." id="blog">
+		<Fragment slot="intro">Posts are on the way. Join the newsletter below to get them first.</Fragment>
+	</Section>
 </BaseLayout>

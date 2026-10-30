@@ -1,0 +1,89 @@
+---
+/**
+ * A homepage content section: heading, an optional intro line with a ghost
+ * button pushed to the far right, then whatever the section shows. Copied
+ * from the Editor Menu Shelf Pro site (src/components/home/Section.astro).
+ *
+ * Fades in on scroll via .scroll-animate (observer in BaseLayout).
+ *
+ * Props:
+ *   title  section heading (omit for sections that carry their own)
+ *   cta    { href, label, external? } button beside the intro; the arrow is added here
+ *   id     anchor for in-page links
+ *
+ * Slots:
+ *   intro    the one-line pitch under the heading; may contain links
+ *   default  the section body
+ */
+interface Props {
+	title?: string;
+	cta?: { href: string; label: string; external?: boolean };
+	id?: string;
+}
+const { title, cta, id } = Astro.props;
+const hasIntro = Astro.slots.has('intro');
+const external = cta?.external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+<section class="section gutter scroll-animate" id={id}>
+	{title && <h2 class="section__title">{title}</h2>}
+	{hasIntro && (
+		<div class="lede">
+			<p class="section__intro"><slot name="intro" /></p>
+			{cta && <a class="btn btn--ghost" href={cta.href} {...external}>{cta.label} &#8594;</a>}
+		</div>
+	)}
+	<slot />
+</section>
+
+<style>
+	.section {
+		padding-top: 5.5rem;
+	}
+	.section__title {
+		font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+		line-height: 1.18;
+		letter-spacing: -0.02em;
+		font-weight: 600;
+		margin: 0 0 1rem;
+		max-width: 22ch;
+	}
+
+	/* Same geometry as the hero row: the paragraph keeps its natural width and
+	   the button is pushed to the far right, top aligned. */
+	.lede {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.5rem;
+		margin-bottom: 2.25rem;
+	}
+	@media (min-width: 48rem) {
+		.lede {
+			flex-direction: row;
+			justify-content: space-between;
+			gap: 2.5rem;
+		}
+		/* Row only: in the stacked column a flex-basis would set its height. */
+		.section__intro { flex: 0 1 62ch; }
+	}
+	.lede .btn {
+		flex-shrink: 0;
+	}
+	.section__intro {
+		margin: 0;
+		color: var(--text-soft);
+		max-width: 62ch;
+	}
+	/* Inline prose links. :global because slotted markup belongs to the page. */
+	.section__intro :global(a) {
+		color: var(--accent);
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+		text-decoration-thickness: 1px;
+		transition: opacity 0.15s var(--ease);
+	}
+	.section__intro :global(a:hover) {
+		opacity: 0.75;
+	}
+</style>

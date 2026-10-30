@@ -1,0 +1,52 @@
+---
+/**
+ * Round photo with a brand-blue ring. Same technique as the Editor Menu Shelf
+ * Pro site's Quote.astro avatar: the ring is the wrapper's background showing
+ * through its padding, not a border. A border on the round <img> anti-aliases
+ * both edges separately and leaves a dark seam between ring and photo.
+ *
+ * Props:
+ *   src    imported image (astro:assets)
+ *   alt    alt text
+ *   size   diameter in px (images are generated at 1x and 2x); a parent can
+ *          override the rendered size with the --avatar-size custom property
+ *   class  extra classes for the wrapper (e.g. reveal, responsive sizing)
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+	src: ImageMetadata;
+	alt: string;
+	size: number;
+	class?: string;
+	loading?: 'eager' | 'lazy';
+}
+const { src, alt, size, class: className, loading = 'lazy' } = Astro.props;
+---
+
+<span class:list={['avatar', className]} style={`--avatar-default: ${size}px`}>
+	<Image src={src} alt={alt} width={size} height={size} densities={[1, 2]} loading={loading} />
+</span>
+
+<style>
+	.avatar {
+		display: block;
+		box-sizing: border-box;
+		flex-shrink: 0;
+		/* Parents resize it by setting --avatar-size; the inline default is
+		   only a fallback so a parent's rule can still win. */
+		width: var(--avatar-size, var(--avatar-default));
+		height: var(--avatar-size, var(--avatar-default));
+		padding: 3px;
+		border-radius: 50%;
+		background: var(--accent);
+		line-height: 0;
+	}
+	.avatar :global(img) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+</style>

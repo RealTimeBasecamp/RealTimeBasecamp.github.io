@@ -1,7 +1,8 @@
 ---
 /**
  * Page shell for every page: <head>, fonts, global CSS, the masthead and
- * footer. Pages fill the default slot inside <main>.
+ * footer. Pages fill the default slot inside <main>. Also owns the
+ * scroll-reveal observer, since .scroll-animate is used by every Section.
  *
  * The Person JSON-LD tells search engines which profiles belong to the same
  * person, so they can link this site, LinkedIn, GitHub and the rest.
@@ -42,10 +43,11 @@ const person = {
 <meta property="og:description" content={description}>
 <meta property="og:url" content={canonical}>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="sitemap" href="/sitemap-index.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
-<script type="application/ld+json" set:html={JSON.stringify(person)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(person)} />
 </head>
 <body>
 	<a class="skip-link" href="#main">Skip to content</a>
@@ -54,5 +56,26 @@ const person = {
 		<slot />
 	</main>
 	<SiteFooter />
+
+	<script>
+		/* Scroll reveal for every .scroll-animate section. Copied from the
+		   Editor Menu Shelf Pro site's HomeLayout.astro. */
+		const targets = document.querySelectorAll('.scroll-animate');
+
+		if (!('IntersectionObserver' in window)) {
+			targets.forEach((el) => el.classList.add('reveal'));
+		} else {
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('reveal');
+						observer.unobserve(entry.target);
+					}
+				});
+			}, { threshold: 0.12 });
+
+			targets.forEach((el) => observer.observe(el));
+		}
+	</script>
 </body>
 </html>

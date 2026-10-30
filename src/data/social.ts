@@ -1,5 +1,5 @@
 /**
- * Profile links shown as icons in the masthead and footer.
+ * Profile links shown as icons in the footer.
  */
 import ArtStationIcon from '../assets/icons/artstation.svg';
 import GitHubIcon from '../assets/icons/github.svg';
