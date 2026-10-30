@@ -1,0 +1,81 @@
+/* Reset and page-wide rules. Copied from the Editor Menu Shelf Pro homepage
+   (ue5-editor-menu-shelf-pro/src/styles/home/base.css). */
+body { margin: 0; padding: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+body {
+	background: var(--ground);
+	color: var(--text);
+	font-family: var(--font-sans);
+	font-size: 1rem;
+	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
+	overflow-x: hidden;
+}
+
+* { box-sizing: border-box; }
+
+h1, h2, h3 {
+	text-wrap: balance;
+	margin: 0;
+	font-weight: 600;
+}
+
+a { color: inherit; }
+
+.btn:focus-visible,
+a:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+	border-radius: 4px;
+}
+
+/* ---------------------------------------------------------------- gutters --
+   Horizontal padding that widens at each breakpoint instead of a fixed
+   max-width container. */
+.gutter {
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+@media (min-width: 576px)  { .gutter { padding-left: 3rem;  padding-right: 3rem;  } }
+@media (min-width: 992px)  { .gutter { padding-left: 8rem;  padding-right: 8rem;  } }
+@media (min-width: 1400px) { .gutter { padding-left: 17rem; padding-right: 17rem; } }
+
+/* --------------------------------------------------------------- entrance --
+   Blur + fade + rise, staggered down the page. Self-completing on load, so
+   the page is fully readable on first paint. */
+@keyframes reveal {
+	from { opacity: 0; filter: blur(12px); transform: translateY(12px); }
+	to   { opacity: 1; filter: blur(0);    transform: translateY(0); }
+}
+.reveal {
+	animation: reveal 2.2s var(--ease) both;
+}
+.reveal-1 { animation-delay:  50ms; }
+.reveal-2 { animation-delay: 280ms; }
+.reveal-3 { animation-delay: 520ms; }
+
+@media (prefers-reduced-motion: reduce) {
+	* { scroll-behavior: auto !important; }
+	.reveal { animation: none; }
+}
+
+/* Skip link: off screen until focused, then pinned over the masthead. */
+.skip-link {
+	position: absolute;
+	top: 0.5rem;
+	left: 0.5rem;
+	z-index: 100;
+	padding: 0.5rem 0.9rem;
+	border-radius: 4px;
+	background: var(--accent);
+	color: #14151a;
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-decoration: none;
+	transform: translateY(calc(-100% - 1rem));
+}
+.skip-link:focus-visible {
+	transform: none;
+}

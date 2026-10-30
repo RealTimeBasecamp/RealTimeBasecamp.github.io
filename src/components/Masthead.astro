@@ -1,0 +1,111 @@
+---
+/**
+ * Sticky site header, adapted from the Editor Menu Shelf Pro masthead
+ * (src/components/home/Masthead.astro). Flat at the top of the page; once the
+ * page scrolls it turns translucent and blurs what passes underneath.
+ *
+ * Below 50rem it uses the same geometry as the plugin docs header (3.5rem
+ * tall, 1rem padding), so the logo doesn't move between the two sites.
+ */
+import Lockup from './Lockup.astro';
+import { SOCIAL_LINKS } from '../data/social';
+---
+
+<div class="masthead-sentinel" aria-hidden="true"></div>
+<header class="masthead gutter">
+	<a class="masthead__brand" href="/" aria-label="Real Time Basecamp home">
+		<Lockup />
+	</a>
+	<nav class="masthead__nav" aria-label="Profiles">
+		{SOCIAL_LINKS.map(({ label, href, icon: SocialIcon }) => (
+			<a class="masthead__icon" href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+				<SocialIcon aria-hidden="true" />
+			</a>
+		))}
+	</nav>
+</header>
+
+<style>
+	.masthead {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding-top: 0.9375rem;
+		padding-bottom: 0.9375rem;
+		background: var(--ground);
+		/* Transparent rather than absent, so it fades in with the glass
+		   instead of adding 1px on first scroll. */
+		border-bottom: 1px solid transparent;
+		transition: background-color 0.3s ease, border-color 0.3s ease,
+		            backdrop-filter 0.3s ease;
+	}
+	/* --ground at 54%: the alpha is what lets the blur read. */
+	.masthead--stuck {
+		background: rgba(28, 29, 33, 0.54);
+		backdrop-filter: blur(14px) saturate(160%);
+		-webkit-backdrop-filter: blur(14px) saturate(160%);
+		border-bottom-color: rgba(255, 255, 255, 0.07);
+	}
+	@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+		.masthead--stuck { background: var(--ground); }
+	}
+	/* Watched instead of the header, which is sticky and never leaves the
+	   viewport. The 1px of height is absorbed by the negative margin. */
+	.masthead-sentinel {
+		height: 1px;
+		margin-bottom: -1px;
+		pointer-events: none;
+	}
+	.masthead__brand {
+		display: flex;
+		align-items: center;
+		text-decoration: none;
+		margin-right: auto;
+	}
+	.masthead__nav {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+	}
+	.masthead__icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.2rem;
+		height: 2.2rem;
+		border-radius: 4px;
+		color: var(--text-soft);
+		transition: background-color 0.3s ease, color 0.3s ease;
+	}
+	.masthead__icon:hover {
+		background: rgba(255, 255, 255, 0.08);
+		color: var(--text);
+	}
+	/* Height only: the MentorCruise mark is wider than it is tall. */
+	.masthead__icon :global(svg) {
+		height: 1.15rem;
+		width: auto;
+		flex-shrink: 0;
+	}
+	@media (max-width: 50rem) {
+		.masthead {
+			height: 3.5rem;
+			padding: 0 1rem;
+		}
+	}
+</style>
+
+<script>
+	/* Glass on once the 1px sentinel at the top of the page scrolls away. */
+	const header = document.querySelector('.masthead');
+	const sentinel = document.querySelector('.masthead-sentinel');
+
+	if (header && sentinel && 'IntersectionObserver' in window) {
+		new IntersectionObserver((entries) => {
+			header.classList.toggle('masthead--stuck', !entries[0].isIntersecting);
+		}, { threshold: 0 }).observe(sentinel);
+	}
+</script>

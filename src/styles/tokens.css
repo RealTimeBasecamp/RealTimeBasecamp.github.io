@@ -1,0 +1,33 @@
+/* ============================================================================
+   Design tokens. Copied from the Editor Menu Shelf Pro homepage
+   (ue5-editor-menu-shelf-pro/src/styles/home/tokens.css) so both sites read
+   as one brand. Change the look there first, then re-copy.
+   Committed dark, single theme, every colour painted explicitly.
+   ========================================================================= */
+
+:root {
+	/* ground + surfaces */
+	--ground:      #1c1d21;
+	--ground-lift: #212227;
+	--surface:     #24272f;
+	--line:        #33363f;
+
+	/* One frame for every screenshot on the site. */
+	--shot-border: 1px solid var(--line);
+	--shot-radius: 10px;
+
+	/* text */
+	--text:        #f9fafc;
+	--text-soft:   #c0c2c7;
+	--muted:       #888b96;
+
+	/* accent */
+	--accent:      #b3c7ff;
+	--accent-deep: #3447ff;
+	--accent-low:  #131e4f;
+
+	--font-sans: "IBM Plex Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+	--font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+
+	--ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

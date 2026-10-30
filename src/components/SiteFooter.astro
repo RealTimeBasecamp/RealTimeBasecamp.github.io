@@ -1,0 +1,121 @@
+---
+/**
+ * Site footer: newsletter signup, brand mark with profile links, copyright.
+ * Adapted from the Editor Menu Shelf Pro footer
+ * (src/components/home/SiteFooter.astro).
+ */
+import FooterLogo from '../assets/logos/icon-gradient-smooth.svg';
+import NewsletterEmbed from './NewsletterEmbed.astro';
+import { SOCIAL_LINKS } from '../data/social';
+---
+
+<footer class="site-footer gutter">
+	<div class="signup">
+		<div class="signup__copy">
+			<p class="signup__title">Newsletter</p>
+			<p class="signup__note">Unreal tooling tips, plugin releases and new posts. No spam.</p>
+		</div>
+		<NewsletterEmbed class="signup__frame" />
+	</div>
+
+	<div class="site-footer__bottom">
+		<a class="site-footer__logo" href="/" aria-label="Real Time Basecamp home">
+			<FooterLogo aria-hidden="true" />
+		</a>
+		<div class="site-footer__social">
+			{SOCIAL_LINKS.map(({ label, href, icon: SocialIcon }) => (
+				<a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+					<SocialIcon aria-hidden="true" />
+				</a>
+			))}
+		</div>
+		<p class="site-footer__copy">
+			&copy; {new Date().getFullYear()} Real Time Basecamp. All rights reserved.
+		</p>
+	</div>
+</footer>
+
+<style>
+	.site-footer {
+		margin-top: 5.5rem;
+		padding-top: 2.5rem;
+		padding-bottom: 3.5rem;
+		border-top: 1px solid var(--line);
+		color: var(--muted);
+		font-size: 0.8125rem;
+		line-height: 1.6;
+	}
+
+	.signup {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.25rem 2.5rem;
+		margin-bottom: 2.5rem;
+		padding: 1.5rem;
+		border: 1px solid var(--line);
+		border-radius: 12px;
+		background: var(--ground-lift);
+	}
+	.signup__copy {
+		flex: 1 1 18rem;
+	}
+	.signup__title {
+		margin: 0 0 0.2rem;
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--text);
+	}
+	.signup__note {
+		margin: 0;
+		font-size: 0.875rem;
+	}
+	.signup :global(.signup__frame) {
+		flex: 1 1 22rem;
+		min-width: 0;
+	}
+
+	.site-footer__bottom {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 1.5rem;
+	}
+	/* The SVG's three bands are repainted as currentColor at their original
+	   opacities, so the stepped fade follows the link colour. */
+	.site-footer__logo {
+		display: inline-flex;
+		color: var(--text-soft);
+		transition: color 0.2s ease;
+	}
+	.site-footer__logo:hover { color: var(--accent); }
+	.site-footer__logo :global(svg) {
+		height: 1.9rem;
+		width: auto;
+		display: block;
+	}
+	.site-footer__logo :global(svg *) { fill: currentColor; }
+	.site-footer__logo :global(svg .cls-2) { opacity: 0.5; }
+	.site-footer__logo :global(svg .cls-3) { opacity: 0.25; }
+
+	.site-footer__social {
+		display: flex;
+		align-items: center;
+		gap: 1.1rem;
+	}
+	.site-footer__social a {
+		display: inline-flex;
+		color: var(--text-soft);
+		transition: color 0.2s ease;
+	}
+	.site-footer__social a:hover { color: var(--accent); }
+	.site-footer__social :global(svg) {
+		height: 1.4rem;
+		width: auto;
+		flex-shrink: 0;
+	}
+	.site-footer__copy {
+		margin: 0 0 0 auto;
+	}
+</style>

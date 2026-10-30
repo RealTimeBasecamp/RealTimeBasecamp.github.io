@@ -1,0 +1,41 @@
+---
+/**
+ * The beehiiv signup form (email field + subscribe button). Copied from the
+ * Editor Menu Shelf Pro site (src/components/NewsletterEmbed.astro).
+ *
+ * The iframe is cross origin, so this site's CSS can't reach inside it: the
+ * field and button colours are set in the beehiiv dashboard. Callers size the
+ * frame through `class` (target it with :global, it has no scope attribute).
+ */
+import { NEWSLETTER_EMBED_URL } from '../data/links';
+
+interface Props {
+	class?: string;
+	title?: string;
+}
+
+const { class: className, title = 'Subscribe to the Real Time Basecamp newsletter' } = Astro.props;
+---
+
+<iframe
+	class:list={['newsletter-embed', className]}
+	src={NEWSLETTER_EMBED_URL}
+	title={title}
+	height="52"
+	frameborder="0"
+	scrolling="no"
+	loading="lazy"
+></iframe>
+
+<style>
+	.newsletter-embed {
+		display: block;
+		width: 100%;
+		max-width: 28rem;
+		height: 52px;
+		border: 0;
+		margin: 0;
+		background: transparent;
+		color-scheme: light;
+	}
+</style>

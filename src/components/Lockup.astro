@@ -1,0 +1,46 @@
+---
+/**
+ * The brand lockup (icon + "RT Basecamp" text). Copied from the Editor Menu
+ * Shelf Pro site (src/components/Lockup.astro), dark artwork only since this
+ * site is dark only.
+ *
+ * Width and height are set from the file's aspect ratio, so the logo is the
+ * right size on first paint. On narrow screens the wordmark is cropped off
+ * and only the icon shows: the icon is the first ICON_UNITS of the viewBox,
+ * so clipping the wrapper to that width leaves exactly the mark.
+ */
+import OnDark from '../assets/logos/lockup-colour-on-dark.svg';
+
+interface Props {
+	/** Rendered height in px; width follows the file's aspect ratio. */
+	height?: number;
+}
+
+/** Width of the icon mark in the lockup's viewBox units. */
+const ICON_UNITS = 4096;
+
+const { height = 30 } = Astro.props;
+const width = Math.round((height * OnDark.width) / OnDark.height);
+const iconWidth = Math.ceil((height * ICON_UNITS) / OnDark.height);
+---
+
+<span class="lockup" style={`--lockup-icon-w: ${iconWidth}px`}>
+	<OnDark class="lockup__art" width={width} height={height} aria-hidden="true" />
+</span>
+
+<style>
+	.lockup {
+		display: block;
+		flex-shrink: 0;
+		overflow: hidden;
+	}
+	.lockup__art {
+		display: block;
+		max-width: none;
+	}
+	@media (max-width: 50rem) {
+		.lockup {
+			width: var(--lockup-icon-w);
+		}
+	}
+</style>

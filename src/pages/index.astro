@@ -1,0 +1,21 @@
+---
+/**
+ * Homepage. This file is only the running order of the page: the shell is
+ * src/layouts/BaseLayout.astro, the cards are src/data/homeCards.ts.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import BentoGrid from '../components/BentoGrid.astro';
+import Card from '../components/Card.astro';
+import { HOME_CARDS } from '../data/homeCards';
+---
+
+<BaseLayout
+	title="Rob Fraser | Real Time Basecamp"
+	description="Rob Fraser, UE5 Technical Artist, pipeline developer and mentor. Creator of Editor Menu Shelf Pro for Unreal Engine 5."
+>
+	<Hero />
+	<BentoGrid>
+		{HOME_CARDS.map((card) => <Card {...card} />)}
+	</BentoGrid>
+</BaseLayout>
