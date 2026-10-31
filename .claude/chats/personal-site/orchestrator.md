@@ -43,7 +43,7 @@ Ctx: Rob Fraser's site https://realtimebasecamp.github.io/ (promote full-time/fr
 * Custom domain `realtimebasecamp.com`: `public/CNAME`, Settings > Pages, `site` in both repos' `astro.config.mjs`.
 
 ## Handoff
-feat 07 · branch dev · state: dev has `bf8d9e4 9e7275d 521d47b 57fbef7 76d0963 dae2fae f793676` + tracking commit, none pushed. Feat-07 round 2 and SiteNav tweak committed; token-saver 2.0.0 re-copied (source `c91eebc` in best-practices-skills) · next: Feat-07 Q1 (UE stat options) -> non-LATER checklist items -> conventional-code -> commit on approval. LATER items wait for the user.
+feat 07 · branch dev · state: Feat-07 round 3 committed (`dadd902` homepage, `7c2e090` masthead + 90.5% scale), none pushed. Plugin docs repo (`E:\HDDBackups\Portfolio\WebDev\ue5-editor-menu-shelf-pro`, branch `docs`) has the matching scale.css commit · next: rough outlines of the other pages (Portfolio, Products, Mentoring, Blog, Contact) so the user can see the whole site; then Feat-07 waiting-on-user items. LATER items wait for the user.
 
 ---
 
