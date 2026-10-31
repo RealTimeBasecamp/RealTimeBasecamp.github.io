@@ -1,9 +1,10 @@
 ---
 /**
- * Round photo with a brand-blue ring. Same technique as the Editor Menu Shelf
- * Pro site's Quote.astro avatar: the ring is the wrapper's background showing
- * through its padding, not a border. A border on the round <img> anti-aliases
- * both edges separately and leaves a dark seam between ring and photo.
+ * Round photo with a subtle grey ring. Same technique as the Editor Menu
+ * Shelf Pro site's Quote.astro avatar: the ring is the wrapper's background
+ * showing through its padding, not a border. A border on the round <img>
+ * anti-aliases both edges separately and leaves a dark seam between ring
+ * and photo.
  *
  * Props:
  *   src    imported image (astro:assets)
@@ -37,9 +38,9 @@ const { src, alt, size, class: className, loading = 'lazy' } = Astro.props;
 		   only a fallback so a parent's rule can still win. */
 		width: var(--avatar-size, var(--avatar-default));
 		height: var(--avatar-size, var(--avatar-default));
-		padding: 3px;
+		padding: 2px;
 		border-radius: 50%;
-		background: var(--accent);
+		background: var(--line);
 		line-height: 0;
 	}
 	.avatar :global(img) {

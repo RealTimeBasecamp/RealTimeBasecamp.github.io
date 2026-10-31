@@ -1,0 +1,35 @@
+---
+/**
+ * Full-width banner at the top of a product page, from the product's
+ * `banner` in src/data/products.ts.
+ *
+ * Props:
+ *   image  ProductImage (src, alt, png)
+ */
+import { Image } from 'astro:assets';
+import type { ProductImage } from '../data/products';
+
+interface Props {
+	image: ProductImage;
+}
+const { image } = Astro.props;
+---
+
+<Image
+	class="banner"
+	src={image.src}
+	alt={image.alt}
+	widths={[800, 1600]}
+	sizes="(min-width: 75rem) 70rem, 100vw"
+	{...(image.png && { format: 'png' })}
+/>
+
+<style>
+	.banner {
+		display: block;
+		width: 100%;
+		height: auto;
+		border: 1px solid var(--line);
+		border-radius: 6px;
+	}
+</style>

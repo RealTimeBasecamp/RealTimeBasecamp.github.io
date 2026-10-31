@@ -1,0 +1,62 @@
+---
+/**
+ * A centred call to action: a large line, one short sentence and a big
+ * white button (the same white as the masthead's Contact me, the site's
+ * main action). Sits under a section's content, after the proof.
+ *
+ * Props:
+ *   title  the large line
+ *   text   the sentence under it
+ *   label  button text; the arrow is added here
+ *   href   button target
+ */
+interface Props {
+	title: string;
+	text: string;
+	label: string;
+	href: string;
+}
+const { title, text, label, href } = Astro.props;
+---
+
+<div class="cta">
+	<p class="cta__title">{title}</p>
+	<p class="cta__text">{text}</p>
+	<a class="btn cta__btn" href={href}>{label} &#8594;</a>
+</div>
+
+<style>
+	.cta {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+		/* Room on both sides so it reads as its own moment, not part of the
+		   grid above or the section below. */
+		margin: 4.5rem 0 3rem;
+		text-align: center;
+	}
+	.cta__title {
+		margin: 0;
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		font-weight: 600;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+		color: var(--text);
+	}
+	.cta__text {
+		margin: 0;
+		color: var(--text-soft);
+	}
+	/* Bigger than the standard .btn: this is the page's main ask. */
+	.cta__btn {
+		margin-top: 0.75rem;
+		padding: 0.75rem 1.5rem;
+		font-size: 1rem;
+		background: var(--text);
+		color: var(--ground);
+	}
+	.cta__btn:hover {
+		background: var(--text-soft);
+	}
+</style>

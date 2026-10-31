@@ -8,6 +8,7 @@
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Section from '../../components/Section.astro';
+import ProductBanner from '../../components/ProductBanner.astro';
 import { PRODUCTS, type Product } from '../../data/products';
 
 export const getStaticPaths = (() =>
@@ -23,5 +24,7 @@ const { item } = Astro.props;
 ---
 
 <BaseLayout title={`${item.title} | Rob Fraser`} description={item.text ?? item.title}>
-	<Section title={item.title} />
+	<Section title={item.title}>
+		{item.banner && <ProductBanner image={item.banner} />}
+	</Section>
 </BaseLayout>

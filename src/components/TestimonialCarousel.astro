@@ -11,6 +11,7 @@
  */
 import StarIcon from '../assets/icons/star.svg';
 import { TESTIMONIALS } from '../data/testimonials';
+import { MENTORCRUISE_URL } from '../data/links';
 ---
 
 <div class="quotes" tabindex="0" aria-roledescription="carousel" aria-label="Mentee reviews">
@@ -21,9 +22,17 @@ import { TESTIMONIALS } from '../data/testimonials';
 					{Array.from({ length: rating }, () => <StarIcon aria-hidden="true" />)}
 				</p>
 				<p class="quotes__text">&ldquo;{quote}&rdquo;</p>
-				<footer class="quotes__by">
-					<b>{name}</b>
-					<span>{role}</span>
+				<footer>
+					<a
+						class="quotes__by"
+						href={MENTORCRUISE_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+						title="Read this review on MentorCruise"
+					>
+						<b>{name}</b>
+						<span>{role}</span>
+					</a>
 				</footer>
 			</blockquote>
 		))}
@@ -47,9 +56,9 @@ import { TESTIMONIALS } from '../data/testimonials';
 </div>
 
 <style>
-	/* No panel or rules: the quotes sit straight on the page. */
+	/* No panel or rules: the quotes sit straight on the page. The radius only
+	   shapes the focus outline. */
 	.quotes {
-		padding: 1rem 0 0;
 		border-radius: 12px;
 	}
 	.quotes:focus-visible {
@@ -92,13 +101,27 @@ import { TESTIMONIALS } from '../data/testimonials';
 		line-height: 1.55;
 		color: var(--text);
 	}
+	/* Wider on desktop so the longest quote, which sets the block's height,
+	   wraps to fewer lines and short quotes aren't marooned in space. */
 	@media (min-width: 768px) {
-		.quotes__text { font-size: 1.25rem; }
+		.quotes__text {
+			max-width: 76ch;
+			font-size: 1.25rem;
+		}
 	}
+	/* The name and role link to the MentorCruise profile, where the full
+	   review backs up the quote. */
 	.quotes__by {
-		display: grid;
+		display: inline-grid;
 		gap: 0.1rem;
 		font-size: 0.875rem;
+		text-decoration: none;
+		transition: opacity 0.15s var(--ease);
+	}
+	.quotes__by:hover { opacity: 0.75; }
+	.quotes__by:hover b {
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
 	}
 	.quotes__by b {
 		color: var(--text);
@@ -112,7 +135,7 @@ import { TESTIMONIALS } from '../data/testimonials';
 		align-items: center;
 		justify-content: center;
 		gap: 1rem;
-		margin-top: 1.75rem;
+		margin-top: 1.25rem;
 	}
 	.quotes__arrow {
 		width: 2.25rem;

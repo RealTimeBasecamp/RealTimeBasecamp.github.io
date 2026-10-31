@@ -1,7 +1,8 @@
 ---
 /**
  * Row of three infographics, each drawn its own way (see `kind` in
- * src/data/stats.ts): a filling dial, a staircase of bars, a grid of dots.
+ * src/data/stats.ts): a logo that fills with colour, a staircase of bars, a
+ * grid of dots.
  * Each one plays once, when it is well inside the viewport, and its number
  * counts up alongside. The HTML holds the final state, so without JS or with
  * reduced motion the stats are simply there.
@@ -15,26 +16,14 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 <ul class="stats">
 	{STATS.map(({ value, suffix = '', label, kind, icon: Icon }) => {
 		const units = Array.from({ length: value }, (_, i) => i);
-		const number = (
-			<span class="stat__value">
-				{Icon && kind !== 'ring' && <Icon class="stat__icon" aria-hidden="true" />}
-				<span><span class="stat__num" data-to={value}>{value}</span>{suffix}</span>
-			</span>
-		);
 		return (
 			<li class:list={['stat', `stat--${kind}`]} style={`--n: ${value}`}>
 				<div class="stat__art">
-					{kind === 'ring' && (
-						<>
-							<svg class="stat__ring" viewBox="0 0 120 120" aria-hidden="true">
-								<circle class="ring__track" cx="60" cy="60" r="54" />
-								<circle class="ring__fill" cx="60" cy="60" r="54" pathLength="100" />
-							</svg>
-							<span class="ring__inner">
-								{Icon && <Icon class="ring__icon" aria-hidden="true" />}
-								{number}
-							</span>
-						</>
+					{kind === 'fill' && Icon && (
+						<span class="fill" aria-hidden="true">
+							<Icon class="fill__base" />
+							<Icon class="fill__top" />
+						</span>
 					)}
 					{kind === 'bars' && (
 						<span class="bars" aria-hidden="true">
@@ -47,7 +36,10 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 						</span>
 					)}
 				</div>
-				{kind !== 'ring' && number}
+				<span class="stat__value">
+					{Icon && kind !== 'fill' && <Icon class="stat__icon" aria-hidden="true" />}
+					<span><span class="stat__num" data-to={value}>{value}</span>{suffix}</span>
+				</span>
 				<p class="stat__label">{label}</p>
 			</li>
 		);
@@ -56,12 +48,14 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 
 <style>
 	/* Three across at every width; the art shrinks on phones rather than
-	   stacking into a screen-high column. */
+	   stacking into a screen-high column. Extra room above and below: the
+	   row has no heading and follows a dense logo grid (Software), so it
+	   needs air to read as its own section. */
 	.stats {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 0.75rem;
-		margin: 0;
+		margin: 2.5rem 0;
 		padding: 0;
 		list-style: none;
 	}
@@ -113,44 +107,31 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 		.stat__label { font-size: 1rem; }
 	}
 
-	/* --- ring: a dial that fills from 12 o'clock --- */
-	.stat__ring {
+	/* --- fill: the logo colours in from bottom to top. Two copies stacked:
+	   a dim base and a white top layer revealed by its clip-path. White, not
+	   the accent: Epic's brand guidelines don't allow recolouring the logo. --- */
+	.fill {
+		position: relative;
 		display: block;
 		width: 100%;
 		height: 100%;
-		transform: rotate(-90deg);
+		padding: 6%;
+		box-sizing: border-box;
 	}
-	.ring__track,
-	.ring__fill {
-		fill: none;
-		stroke-width: 4;
-	}
-	.ring__track { stroke: var(--line); }
-	.ring__fill {
-		stroke: var(--accent);
-		stroke-linecap: round;
-		stroke-dasharray: 100;
-		stroke-dashoffset: 0;
-		transition: stroke-dashoffset var(--play) var(--ease);
-	}
-	.stat.is-pending .ring__fill { stroke-dashoffset: 100; }
-
-	.ring__inner {
+	.fill :global(.fill__base),
+	.fill :global(.fill__top) {
 		position: absolute;
-		inset: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 0.35rem;
-		container-type: inline-size;
+		inset: 6%;
+		width: 88%;
+		height: 88%;
 	}
-	.ring__inner :global(.ring__icon) {
-		height: 16cqi;
-		width: auto;
-		color: var(--text-soft);
+	.fill :global(.fill__base) { color: var(--line); }
+	.fill :global(.fill__top) {
+		color: var(--text);
+		clip-path: inset(0 0 0 0);
+		transition: clip-path var(--play) var(--ease);
 	}
-	.ring__inner .stat__value { font-size: 25cqi; }
+	.stat.is-pending .fill :global(.fill__top) { clip-path: inset(100% 0 0 0); }
 
 	/* --- bars: one per year, each a step taller, rising left to right --- */
 	.bars {

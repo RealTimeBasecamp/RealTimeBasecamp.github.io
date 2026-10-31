@@ -7,7 +7,7 @@
  * rail is simply full.
  *
  * Props:
- *   items  Role[] from src/data/experience.ts (EXPERIENCE or EDUCATION)
+ *   items  Role[] from src/data/experience.ts (EXPERIENCE)
  */
 import type { Role } from '../data/experience';
 
@@ -36,8 +36,8 @@ const { items } = Astro.props;
 		   the fill and the stop markers. */
 		--rail-x: 0.5rem;
 		--indent: 2.75rem;
-		/* Height of each stop's heading row (the logo's height), so the
-		   marker can sit on its centre line. */
+		/* Height of each stop's heading row, so the marker can sit on its
+		   centre line. */
 		--head: 2.5rem;
 		--progress: 1;
 		position: relative;
@@ -97,10 +97,12 @@ const { items } = Astro.props;
 		gap: 0.875rem;
 		min-height: var(--head);
 	}
-	/* :global because the class lands on an imported SVG component. */
+	/* :global because the class lands on an imported SVG component. Every
+	   logo fits the same square, whatever its aspect ratio, so a wide mark
+	   doesn't dwarf a compact one. */
 	.timeline__head :global(.timeline__logo) {
-		height: var(--head);
-		width: auto;
+		width: 2rem;
+		height: 2rem;
 		flex-shrink: 0;
 		color: var(--text);
 	}

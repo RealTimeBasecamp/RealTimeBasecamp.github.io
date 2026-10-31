@@ -12,34 +12,34 @@ import Timeline from '../components/Timeline.astro';
 import LogoGrid from '../components/LogoGrid.astro';
 import TestimonialCarousel from '../components/TestimonialCarousel.astro';
 import ProductList from '../components/ProductList.astro';
+import CallToAction from '../components/CallToAction.astro';
 import { CLIENTS, SOFTWARE } from '../data/logos';
-import { EDUCATION, EXPERIENCE } from '../data/experience';
+import { EXPERIENCE } from '../data/experience';
+import { CONTACT_LINK } from '../data/nav';
+import { HIRE_CTA } from '../data/cta';
 ---
 
 <BaseLayout
 	title="Rob Fraser | Real Time Basecamp"
-	description="Rob Fraser, UE5 Technical Artist, pipeline developer and mentor. Creator of Editor Menu Shelf Pro for Unreal Engine 5."
+	description="Rob Fraser is a UE5 Technical Artist, Pipeline Developer and mentor with 14 years of experience in Unreal Engine."
 >
 	<Hero />
-
-	<Section>
-		<Stats />
-	</Section>
 
 	<Section title="Experience" id="experience">
 		<Timeline items={EXPERIENCE} />
 	</Section>
 
-	<Section title="Education" id="education">
-		<Timeline items={EDUCATION} />
-	</Section>
-
 	<Section title="Clients" id="clients">
 		<LogoGrid items={CLIENTS} names={false} />
+		{CONTACT_LINK && <CallToAction {...HIRE_CTA} href={CONTACT_LINK.href} />}
 	</Section>
 
 	<Section title="Software" id="software">
 		<LogoGrid items={SOFTWARE} />
+	</Section>
+
+	<Section>
+		<Stats />
 	</Section>
 
 	<Section id="mentoring">
@@ -48,9 +48,5 @@ import { EDUCATION, EXPERIENCE } from '../data/experience';
 
 	<Section title="Products" id="products">
 		<ProductList />
-	</Section>
-
-	<Section title="Blog" id="blog">
-		<Fragment slot="intro">Posts are on the way. Join the newsletter below to get them first.</Fragment>
 	</Section>
 </BaseLayout>

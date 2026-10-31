@@ -78,7 +78,7 @@ const SECTIONS: NavSection[] = [
 		...mentoringPage,
 		links: [
 			{ ...mentoringPage, description: 'Unreal Engine, career and workflows.' },
-			{ label: 'Book on MentorCruise', href: MENTORCRUISE_URL, live: true, external: true, description: 'Book a 1:1 session.' },
+			{ label: 'Book on MentorCruise', href: MENTORCRUISE_URL, live: true, external: true, description: 'Read my reviews.' },
 		],
 	},
 	blogPage,

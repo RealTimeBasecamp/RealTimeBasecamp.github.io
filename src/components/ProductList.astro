@@ -1,55 +1,98 @@
 ---
 /**
- * Products floating on the page, two across from tablet up. Each shows its
- * type tags (plain outlined labels, not coloured pills), title, text and one
- * call to action. Entries live in src/data/products.ts.
+ * Product cards, after the Featured row on flippednormals.com: a lifted card
+ * with the image flush across the top, then tags, title, text and one
+ * outlined call to action bottom right. Every card is the same standard size
+ * (fixed column width, fixed 16:9 image), so cards stack in a tidy grid
+ * however many products there are. Entries live in src/data/products.ts.
  */
+import { Image } from 'astro:assets';
 import { PRODUCTS } from '../data/products';
 ---
 
 <ul class="products">
-	{PRODUCTS.map(({ title, text, tags, cta }) => (
-		<li class="products__item">
-			<ul class="products__tags">
-				{tags.map((tag) => <li class="products__tag">{tag}</li>)}
-			</ul>
-			<h3 class="products__title">{title}</h3>
-			{text && <p class="products__text">{text}</p>}
-			<div class="products__action">
-				<a
-					class="btn btn--ghost"
-					href={cta.href}
-					{...(cta.external && { target: '_blank', rel: 'noopener noreferrer' })}
-				>
-					{cta.label} &#8594;
-				</a>
+	{PRODUCTS.map(({ title, text, tags, image, cta }) => (
+		<li class="card">
+			<div class="card__media">
+				{image && (
+					<Image
+						class="card__image"
+						src={image.src}
+						alt={image.alt}
+						widths={[400, 800]}
+						sizes="(min-width: 48rem) 24rem, 100vw"
+						quality={100}
+						{...(image.png && { format: 'png' })}
+					/>
+				)}
+			</div>
+			<div class="card__body">
+				<ul class="card__tags">
+					{tags.map((tag) => <li class="card__tag">{tag}</li>)}
+				</ul>
+				<h3 class="card__title">{title}</h3>
+				{text && <p class="card__text">{text}</p>}
+				<div class="card__action">
+					<a
+						class="btn card__btn"
+						href={cta.href}
+						{...(cta.external && { target: '_blank', rel: 'noopener noreferrer' })}
+					>
+						{cta.label} &#8594;
+					</a>
+				</div>
 			</div>
 		</li>
 	))}
 </ul>
 
 <style>
+	/* auto-fill keeps empty tracks, so two products stay card-sized instead
+	   of stretching across the row. */
 	.products {
 		display: grid;
-		gap: 3rem;
+		grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr));
+		gap: 1.5rem;
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
-	@media (min-width: 48rem) {
-		.products {
-			grid-template-columns: repeat(2, 1fr);
-			gap: 3rem 4rem;
-		}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		border: 1px solid var(--line);
+		border-radius: 6px;
+		background: var(--surface);
 	}
 
-	.products__item {
+	/* Same box with or without an image; without one it is the grey
+	   placeholder. Images are encoded at quality 100: anything lower bands
+	   the soft shadows in product renders, and the files stay small. */
+	.card__media {
+		position: relative;
+		aspect-ratio: 16 / 9;
+		background: var(--line);
+	}
+	/* Absolute, so the image's own aspect ratio can't stretch the box. */
+	.card__image {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.card__body {
 		display: flex;
+		flex: 1;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 0.75rem;
+		padding: 1.5rem 1.5rem 1.5rem;
 	}
-	.products__tags {
+	.card__tags {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
@@ -57,28 +100,41 @@ import { PRODUCTS } from '../data/products';
 		padding: 0;
 		list-style: none;
 	}
-	.products__tag {
+	.card__tag {
 		padding: 0.15rem 0.55rem;
 		border: 1px solid var(--line);
 		border-radius: 999px;
 		font-family: var(--font-mono);
-		font-size: 0.75rem;
+		font-size: 0.6875rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
-	.products__title {
-		font-size: 1.375rem;
-		line-height: 1.25;
+	.card__title {
+		font-size: 1.125rem;
+		line-height: 1.3;
 		letter-spacing: -0.01em;
 	}
-	.products__text {
+	.card__text {
 		margin: 0;
+		font-size: 0.9375rem;
 		color: var(--text-soft);
 	}
-	/* Pushed to the bottom so both products' buttons line up. */
-	.products__action {
+
+	/* Bottom right, so every card's button lines up, with at least 1rem
+	   clear of the text above. */
+	.card__action {
+		align-self: flex-end;
 		margin-top: auto;
-		padding-top: 0.75rem;
+		padding-top: 1rem;
+	}
+	/* Outlined, not filled: visible on the card without shouting. */
+	.card__btn {
+		color: var(--text);
+		border-color: var(--line);
+	}
+	.card__btn:hover {
+		border-color: var(--muted);
+		background: rgba(255, 255, 255, 0.05);
 	}
 </style>
