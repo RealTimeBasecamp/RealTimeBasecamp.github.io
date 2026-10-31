@@ -1,0 +1,8 @@
+/* Site-wide scale. Copied from the Editor Menu Shelf Pro homepage
+   (ue5-editor-menu-shelf-pro/src/styles/home/scale.css). Change it there
+   first, then re-copy.
+   Every size on the site is in rem, so shrinking the root shrinks type,
+   spacing and logos together: 90.5% of the browser's 16px, about 14.5px. */
+html {
+	font-size: 90.5%;
+}

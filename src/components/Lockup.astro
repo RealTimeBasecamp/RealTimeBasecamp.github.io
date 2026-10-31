@@ -8,23 +8,27 @@
  * right size on first paint. On narrow screens the wordmark is cropped off
  * and only the icon shows: the icon is the first ICON_UNITS of the viewBox,
  * so clipping the wrapper to that width leaves exactly the mark.
+ * `iconOnly` applies the same crop at every width; it is this site's
+ * addition (the masthead shows the icon alone), not in the copy's source.
  */
 import OnDark from '../assets/logos/lockup-colour-on-dark.svg';
 
 interface Props {
 	/** Rendered height in px; width follows the file's aspect ratio. */
 	height?: number;
+	/** Show only the icon mark at every width, never the wordmark. */
+	iconOnly?: boolean;
 }
 
 /** Width of the icon mark in the lockup's viewBox units. */
 const ICON_UNITS = 4096;
 
-const { height = 30 } = Astro.props;
+const { height = 30, iconOnly = false } = Astro.props;
 const width = Math.round((height * OnDark.width) / OnDark.height);
 const iconWidth = Math.ceil((height * ICON_UNITS) / OnDark.height);
 ---
 
-<span class="lockup" style={`--lockup-icon-w: ${iconWidth}px`}>
+<span class:list={['lockup', { 'lockup--icon': iconOnly }]} style={`--lockup-icon-w: ${iconWidth}px`}>
 	<OnDark class="lockup__art" width={width} height={height} aria-hidden="true" />
 </span>
 
@@ -37,6 +41,9 @@ const iconWidth = Math.ceil((height * ICON_UNITS) / OnDark.height);
 	.lockup__art {
 		display: block;
 		max-width: none;
+	}
+	.lockup--icon {
+		width: var(--lockup-icon-w);
 	}
 	@media (max-width: 50rem) {
 		.lockup {
