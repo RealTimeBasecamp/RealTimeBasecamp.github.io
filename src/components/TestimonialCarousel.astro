@@ -3,19 +3,23 @@
  * Cross-fading review carousel with arrows, dots and arrow-key support.
  * Adapted from the Editor Menu Shelf Pro site
  * (src/components/TestimonialCarousel.astro): slides now come from
- * src/data/testimonials.ts, and the section heading belongs to the page.
+ * src/data/testimonials.ts, and the homepage shows it without a heading.
  *
  * Slides share one grid cell, so the block takes the tallest slide's height
  * and never jumps between quotes. Auto-advances unless the visitor prefers
  * reduced motion, and pauses while hovered or focused.
  */
+import StarIcon from '../assets/icons/star.svg';
 import { TESTIMONIALS } from '../data/testimonials';
 ---
 
 <div class="quotes" tabindex="0" aria-roledescription="carousel" aria-label="Mentee reviews">
 	<div class="quotes__viewport">
-		{TESTIMONIALS.map(({ quote, name, role }, i) => (
+		{TESTIMONIALS.map(({ quote, name, role, rating }, i) => (
 			<blockquote class:list={['quotes__slide', { 'is-on': i === 0 }]} aria-hidden={i === 0 ? 'false' : 'true'}>
+				<p class="quotes__stars" role="img" aria-label={`${rating} out of 5 stars`}>
+					{Array.from({ length: rating }, () => <StarIcon aria-hidden="true" />)}
+				</p>
 				<p class="quotes__text">&ldquo;{quote}&rdquo;</p>
 				<footer class="quotes__by">
 					<b>{name}</b>
@@ -43,18 +47,25 @@ import { TESTIMONIALS } from '../data/testimonials';
 </div>
 
 <style>
+	/* No panel or rules: the quotes sit straight on the page. */
 	.quotes {
-		border: 1px solid var(--line);
+		padding: 1rem 0 0;
 		border-radius: 12px;
-		background: var(--ground-lift);
-		padding: 2rem 1.5rem 1.25rem;
-	}
-	@media (min-width: 768px) {
-		.quotes { padding: 3rem 3rem 1.5rem; }
 	}
 	.quotes:focus-visible {
 		outline: 2px solid var(--accent);
 		outline-offset: 3px;
+	}
+	.quotes__stars {
+		display: flex;
+		justify-content: center;
+		gap: 0.25rem;
+		margin: 0 0 1.25rem;
+		color: var(--accent);
+	}
+	.quotes__stars :global(svg) {
+		width: 1.25rem;
+		height: 1.25rem;
 	}
 	.quotes__viewport {
 		display: grid;

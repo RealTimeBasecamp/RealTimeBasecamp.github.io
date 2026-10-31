@@ -7,12 +7,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
-import StatRings from '../components/StatRings.astro';
+import Stats from '../components/Stats.astro';
+import Timeline from '../components/Timeline.astro';
 import LogoGrid from '../components/LogoGrid.astro';
 import TestimonialCarousel from '../components/TestimonialCarousel.astro';
 import ProductList from '../components/ProductList.astro';
-import { CLIENTS, EXPERIENCE, SOFTWARE } from '../data/logos';
-import { MENTORCRUISE_URL } from '../data/links';
+import { CLIENTS, SOFTWARE } from '../data/logos';
+import { EDUCATION, EXPERIENCE } from '../data/experience';
 ---
 
 <BaseLayout
@@ -22,35 +23,34 @@ import { MENTORCRUISE_URL } from '../data/links';
 	<Hero />
 
 	<Section>
-		<StatRings />
+		<Stats />
 	</Section>
 
-	<Section title="Experience." id="experience">
-		<LogoGrid items={EXPERIENCE} wide />
+	<Section title="Experience" id="experience">
+		<Timeline items={EXPERIENCE} />
 	</Section>
 
-	<Section title="Clients." id="clients">
-		<LogoGrid items={CLIENTS} />
+	<Section title="Education" id="education">
+		<Timeline items={EDUCATION} />
 	</Section>
 
-	<Section title="Software." id="software">
+	<Section title="Clients" id="clients">
+		<LogoGrid items={CLIENTS} names={false} />
+	</Section>
+
+	<Section title="Software" id="software">
 		<LogoGrid items={SOFTWARE} />
 	</Section>
 
-	<Section
-		title="What my mentees say."
-		id="mentoring"
-		cta={{ href: MENTORCRUISE_URL, label: 'View my MentorCruise profile', external: true }}
-	>
-		<Fragment slot="intro">Reviews from mentoring sessions on MentorCruise.</Fragment>
+	<Section id="mentoring">
 		<TestimonialCarousel />
 	</Section>
 
-	<Section title="Products." id="products">
+	<Section title="Products" id="products">
 		<ProductList />
 	</Section>
 
-	<Section title="Blog." id="blog">
+	<Section title="Blog" id="blog">
 		<Fragment slot="intro">Posts are on the way. Join the newsletter below to get them first.</Fragment>
 	</Section>
 </BaseLayout>

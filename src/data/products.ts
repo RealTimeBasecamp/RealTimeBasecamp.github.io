@@ -2,7 +2,7 @@
  * Products, newest first. Used by the homepage (ProductList.astro), the site
  * menu (nav.ts) and the product pages (pages/products/[slug].astro).
  */
-import { CHEATSHEET_URL, EMSP_URL, emsp, product } from './links';
+import { CHEATSHEET_URL, EMSP_URL, product } from './links';
 
 export interface ProductLink {
 	label: string;
@@ -10,13 +10,15 @@ export interface ProductLink {
 	external?: boolean;
 }
 
+/** Product types. Shown as tags on each product; the products page will filter by them. */
+export type ProductTag = 'Plugin' | 'PDF';
+
 export interface Product {
-	eyebrow: string;
 	title: string;
 	text?: string;
-	/** Quiet status line under the text, e.g. availability or downloads. */
-	status?: string;
-	links: ProductLink[];
+	tags: ProductTag[];
+	/** The one call to action. */
+	cta: ProductLink;
 	/** Gives the product a page at /products/<slug>/. Omit when it has its own site. */
 	slug?: string;
 	/** The product's page: product(slug), or its own site. */
@@ -33,24 +35,19 @@ export interface Product {
 
 export const PRODUCTS: Product[] = [
 	{
-		eyebrow: 'Unreal Engine 5 plugin',
 		title: 'Editor Menu Shelf Pro',
 		text: 'Build custom toolbar menus and workspaces in Unreal Engine 5 without needing any code, or automate it using the Python API.',
-		status: 'Coming soon on Fab',
-		links: [
-			{ label: 'See the plugin', href: EMSP_URL },
-			{ label: 'Read the docs', href: emsp('getting-started/why-editor-menu-shelf-pro/') },
-		],
+		tags: ['Plugin'],
+		cta: { label: 'See the plugin', href: EMSP_URL },
 		page: EMSP_URL,
 		live: true,
 		pinned: true,
 		menuText: 'Custom toolbar menus for UE5.',
 	},
 	{
-		eyebrow: 'Free PDF',
 		title: 'UE5 Blueprint Variables Cheatsheet (2025 Edition)',
-		status: '500+ downloads',
-		links: [{ label: 'Get it on Gumroad', href: CHEATSHEET_URL, external: true }],
+		tags: ['PDF'],
+		cta: { label: 'Get it on Gumroad', href: CHEATSHEET_URL, external: true },
 		slug: 'ue5-blueprint-variables-cheatsheet',
 		page: product('ue5-blueprint-variables-cheatsheet'),
 		live: false,

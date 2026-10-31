@@ -1,29 +1,28 @@
 ---
 /**
- * Products as one flat panel split by hairlines (same treatment as
- * LogoGrid.astro). Status lines are plain muted text, not pills.
- * Entries live in src/data/products.ts.
+ * Products floating on the page, two across from tablet up. Each shows its
+ * type tags (plain outlined labels, not coloured pills), title, text and one
+ * call to action. Entries live in src/data/products.ts.
  */
 import { PRODUCTS } from '../data/products';
 ---
 
 <ul class="products">
-	{PRODUCTS.map(({ eyebrow, title, text, status, links }) => (
+	{PRODUCTS.map(({ title, text, tags, cta }) => (
 		<li class="products__item">
-			<p class="products__eyebrow">{eyebrow}</p>
+			<ul class="products__tags">
+				{tags.map((tag) => <li class="products__tag">{tag}</li>)}
+			</ul>
 			<h3 class="products__title">{title}</h3>
 			{text && <p class="products__text">{text}</p>}
-			{status && <p class="products__status">{status}</p>}
-			<div class="products__links">
-				{links.map(({ label, href, external }) => (
-					<a
-						class="btn btn--ghost"
-						href={href}
-						{...(external && { target: '_blank', rel: 'noopener noreferrer' })}
-					>
-						{label} &#8594;
-					</a>
-				))}
+			<div class="products__action">
+				<a
+					class="btn btn--ghost"
+					href={cta.href}
+					{...(cta.external && { target: '_blank', rel: 'noopener noreferrer' })}
+				>
+					{cta.label} &#8594;
+				</a>
 			</div>
 		</li>
 	))}
@@ -32,32 +31,39 @@ import { PRODUCTS } from '../data/products';
 <style>
 	.products {
 		display: grid;
-		gap: 1px;
+		gap: 3rem;
 		margin: 0;
 		padding: 0;
 		list-style: none;
-		background: var(--line);
-		border: 1px solid var(--line);
-		border-radius: 12px;
-		overflow: hidden;
 	}
 	@media (min-width: 48rem) {
-		.products { grid-template-columns: repeat(2, 1fr); }
+		.products {
+			grid-template-columns: repeat(2, 1fr);
+			gap: 3rem 4rem;
+		}
 	}
 
 	.products__item {
 		display: flex;
 		flex-direction: column;
+		align-items: flex-start;
 		gap: 0.75rem;
-		padding: 1.75rem 1.5rem;
-		background: var(--ground-lift);
 	}
-	.products__eyebrow {
+	.products__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
 		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.products__tag {
+		padding: 0.15rem 0.55rem;
+		border: 1px solid var(--line);
+		border-radius: 999px;
 		font-family: var(--font-mono);
 		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.13em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
@@ -70,16 +76,8 @@ import { PRODUCTS } from '../data/products';
 		margin: 0;
 		color: var(--text-soft);
 	}
-	.products__status {
-		margin: 0;
-		font-size: 0.875rem;
-		color: var(--muted);
-	}
-	/* Pushed to the bottom so both cells' buttons line up. */
-	.products__links {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+	/* Pushed to the bottom so both products' buttons line up. */
+	.products__action {
 		margin-top: auto;
 		padding-top: 0.75rem;
 	}

@@ -2,13 +2,13 @@
 /**
  * Homepage intro, laid out like the Editor Menu Shelf Pro hero
  * (src/components/home/Hero.astro): photo and name, the title line with the
- * two main calls to action (portfolio, mentoring), then the showreel.
+ * one call to action (portfolio), then the showreel.
  * The .reveal-N classes stagger the entrance (keyframes in src/styles/base.css).
  */
 import Avatar from './Avatar.astro';
 import YouTubeEmbed from './YouTubeEmbed.astro';
 import robFraser from '../assets/rob-fraser.png';
-import { ARTSTATION_URL, MENTORCRUISE_URL, SHOWREEL_ID } from '../data/links';
+import { ARTSTATION_URL, SHOWREEL_ID } from '../data/links';
 ---
 
 <section class="hero gutter">
@@ -18,11 +18,8 @@ import { ARTSTATION_URL, MENTORCRUISE_URL, SHOWREEL_ID } from '../data/links';
 	</div>
 
 	<div class="hero__row reveal reveal-2">
-		<p class="hero__tagline">UE5 Technical Artist | Pipeline | Mentor @ MentorCruise</p>
-		<span class="hero__cta">
-			<a class="btn btn--ghost" href={ARTSTATION_URL} target="_blank" rel="noopener noreferrer">View my portfolio &#8594;</a>
-			<a class="btn btn--ghost" href={MENTORCRUISE_URL} target="_blank" rel="noopener noreferrer">Mentoring on MentorCruise &#8594;</a>
-		</span>
+		<p class="hero__tagline">UE5 Technical Artist | Pipeline Developer | Mentor @ MentorCruise</p>
+		<a class="btn btn--ghost" href={ARTSTATION_URL} target="_blank" rel="noopener noreferrer">View my portfolio &#8594;</a>
 	</div>
 
 	<div class="reveal reveal-3">
@@ -77,11 +74,7 @@ import { ARTSTATION_URL, MENTORCRUISE_URL, SHOWREEL_ID } from '../data/links';
 		font-size: 1.0625rem;
 		line-height: 1.6;
 	}
-	.hero__cta {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75rem;
+	.hero__row .btn {
 		flex-shrink: 0;
 	}
 </style>

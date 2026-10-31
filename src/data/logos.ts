@@ -1,7 +1,7 @@
 /**
- * Logo rows on the homepage (LogoGrid.astro): where the user has worked,
- * clients, and software. Names come from the user's portfolio PDF and their
- * own list.
+ * Logo rows on the homepage (LogoGrid.astro): clients and software. Names
+ * come from the user's portfolio PDF and their own list. Where the user has
+ * worked is the career timeline (experience.ts).
  *
  * Logos are one-colour SVGs painted with currentColor, from Simple Icons
  * (CC0). Entries without `logo` render their name only: Simple Icons doesn't
@@ -14,30 +14,16 @@ import MayaIcon from '../assets/logos/maya.svg';
 import PythonIcon from '../assets/logos/python.svg';
 import JavaScriptIcon from '../assets/logos/javascript.svg';
 import DjangoIcon from '../assets/logos/django.svg';
-import PlayStationIcon from '../assets/logos/playstation.svg';
 import VolkswagenIcon from '../assets/logos/volkswagen.svg';
 import AppleIcon from '../assets/logos/apple.svg';
 import MetaIcon from '../assets/logos/meta.svg';
 import HboIcon from '../assets/logos/hbo.svg';
+import WarnerBrosIcon from '../assets/logos/warner-bros.svg';
 
 export interface LogoItem {
 	name: string;
 	logo?: typeof UnrealIcon;
-	/** The logo spells the name, so the visible name is dropped (kept for screen readers). */
-	wordmark?: boolean;
-	/** One line under the name. */
-	note?: string;
 }
-
-export const EXPERIENCE: LogoItem[] = [
-	{ name: 'PlayStation', logo: PlayStationIcon },
-	{
-		name: 'UCL',
-		note: "Teaching on the BPro Master's course at the Bartlett School of Architecture, UCL.",
-	},
-	{ name: 'Foster + Partners' },
-	{ name: 'Framestore' },
-];
 
 export const CLIENTS: LogoItem[] = [
 	{ name: 'Microsoft' },
@@ -47,7 +33,8 @@ export const CLIENTS: LogoItem[] = [
 	{ name: 'Volkswagen', logo: VolkswagenIcon },
 	{ name: 'JP Morgan' },
 	{ name: 'NEOM' },
-	{ name: 'HBO', logo: HboIcon, wordmark: true },
+	{ name: 'HBO', logo: HboIcon },
+	{ name: 'Warner Bros.', logo: WarnerBrosIcon },
 	{ name: 'Magic Leap' },
 	{ name: 'Royal Navy' },
 ];
