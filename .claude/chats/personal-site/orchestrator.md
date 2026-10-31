@@ -1,78 +1,51 @@
-# Epic Architecture: personal-site
+# personal-site
+Ctx: Rob Fraser's site https://realtimebasecamp.github.io/ (promote full-time/freelance/mentoring). Astro 5.13, no Starlight. Push `main` -> `.github/workflows/deploy.yml` (Pages source = GitHub Actions, was Jekyll). Look copied from EMSP repo `ue5-editor-menu-shelf-pro` (served at `/ue5-editor-menu-shelf-pro/`, `/emsp/` redirects). Profile README = separate repo `D:\Portfolio\WebDev\realtimebasecamp`.
 
-## Technical Context
-* Rob Fraser's personal site at `https://realtimebasecamp.github.io/`: homepage, bio,
-  products, blog and contact, to promote full-time, freelance and mentoring work.
-* Plain Astro 5.13 (no Starlight), built and deployed by `.github/workflows/deploy.yml`
-  on every push to `main`. Pages Source must be "GitHub Actions" (it was Jekyll).
-* Look is copied from the plugin docs site (`ue5-editor-menu-shelf-pro`, EMSP). Those
-  docs stay in their own repo and are served at `/ue5-editor-menu-shelf-pro/`;
-  `/emsp/` redirects there.
-* The GitHub profile README is the separate `D:\Portfolio\WebDev\realtimebasecamp` repo.
-
-## Master Feature Tree & Routing Matrix
-* [x] [Feat-01: Homepage (Phase 1)](./features/01-homepage.md)
-* [ ] [Feat-02: Go live](./features/02-go-live.md) (waits for Feat-07; don't push `bf8d9e4` alone)
-* [-] [Feat-03: Bio page](./features/03-bio.md) (superseded: the homepage is the bio, see Feat-07)
-* [x] [Feat-09: Site navigation and page structure](./features/09-navigation.md) (committed on dev `521d47b`)
-* [ ] [Feat-07: Homepage redesign](./features/07-homepage-redesign.md) (active: round 2 + 2026-10-30 notes)
-* [ ] [Feat-08: Mentee world map](./features/08-mentee-map.md) (after Feat-07 round 2)
+## Features
+* [x] [Feat-01: Homepage phase 1](./features/01-homepage.md) `bf8d9e4`
+* [ ] [Feat-02: Go live](./features/02-go-live.md) waits Feat-07; never push `bf8d9e4` alone
+* [-] [Feat-03: Bio page](./features/03-bio.md) superseded by Feat-07 (homepage = bio)
 * [ ] [Feat-04: Products page](./features/04-products.md)
-* [ ] [Feat-05: Blog](./features/05-blog.md)
+* [ ] [Feat-05: Blog](./features/05-blog.md) adds `@astrojs/mdx`, `@astrojs/rss`
 * [ ] [Feat-06: Contact page](./features/06-contact.md)
+* [ ] [Feat-07: Homepage redesign](./features/07-homepage-redesign.md) ACTIVE
+* [ ] [Feat-08: Mentee world map](./features/08-mentee-map.md) after Feat-07
+* [x] [Feat-09: Navigation](./features/09-navigation.md) `521d47b`; prod go-live call pending
 
-## Global File-Lock Registry
-<!-- Mapping to avoid multi-feature collision -->
-* `./src/pages/index.astro`, `./src/components/{Hero,StatRings,LogoGrid,TestimonialCarousel,ProductList}.astro`, `./src/data/*` -> Feat-07 (Status: Active)
-* `./src/components/Masthead.astro` -> Feat-07 (Status: Active). Feat-04 to Feat-06 each add a page link when they go live.
-* `./astro.config.mjs` -> Feat-07 (sitemap added). Feat-05 adds `@astrojs/mdx` and `@astrojs/rss`.
+## Constraints
+* House rules: [CLAUDE.md](../../../CLAUDE.md) (thin pages, content in src/data, URLs in links.ts, copied styles name source, lowercase assets, PNG screenshots, 320/425 checks, no em dashes, user's words only).
+* `main` deploys -> finished pages only. WIP on `dev` (replaced `wip/pages`). Page shows in nav only when its `live` flag is set ([nav.ts](../../../src/data/nav.ts)).
+* Nav order: Portfolio (= homepage), Products, Mentoring, Blog, Contact me.
+* Portfolio content: user plans it; never pull projects from the portfolio PDF.
+* Dev-only content (Epic badge slot) only under `import.meta.env.DEV`.
+* conventional-code before every commit; commit only on user say-so; ask before every push.
+* Logos: one-colour currentColor SVG, Simple Icons (CC0) else official kit; no logo -> show name.
+* git not on PATH: `%LOCALAPPDATA%\GitHubDesktop\app-3.6.10\resources\app\git\cmd\git.exe`.
+* Screenshots: puppeteer-core + Edge (`C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`) installed in the session scratchpad (not durable); <500px widths via fixed-width iframe; `npx astro preview --port 4398`.
 
-## Macro Architectural Constraints & Decisions
-* Rules are in [CLAUDE.md](../../../CLAUDE.md): thin pages, content in `src/data/`,
-  every URL in `src/data/links.ts`, copied styles name their source, lowercase asset
-  names, PNG screenshots, 320px and 425px checks, no em dashes, user's own words only.
-* `main` deploys, so only finished pages go there. All WIP lives on `dev` (user, 2026-10-30;
-  replaces `wip/pages`). Nav order: Portfolio (= homepage), Products, Mentoring, Blog, Contact me.
-* Portfolio content is planned by the user. Don't pull projects from the portfolio PDF.
-* Dev-only content (the Epic badge slot) renders only under `import.meta.env.DEV`.
-* Run `conventional-code` on all work before every commit. Commit only when the user
-  says so, and ask before every push (pushing publishes the site).
-* Sitemap added on main with the redesign (user, 2026-10-30).
-* Look: flat EMSP sections. No gradients, no decorative pills. Every round photo uses
-  `Avatar.astro` (ring = padded background, never a border). See Global notes below.
-* Logos: one-colour currentColor SVGs from Simple Icons (CC0); missing brands show their name.
-* git isn't on PATH on this machine (`F:\Git\cmd` missing). Use GitHub Desktop's
-  `%LOCALAPPDATA%\GitHubDesktop\app-3.6.10\resources\app\git\cmd\git.exe`.
+## Design
+* Flat EMSP sections, clean portfolio feel. No gradients.
+* Pills only for real buttons or filter tags.
+* No page-level grids; grids only inside a featured section.
+* No boxed sections (no bordered panels/cards around section content).
+* Logos and icons large.
+* No full stops in section headings.
+* Infographics vary per stat.
+* Scroll animations trigger on visibility, never page load.
+* One CTA per item.
+* Round photos use [Avatar.astro](../../../src/components/Avatar.astro) (ring = padded bg, never border).
 
-## Global notes (apply to every feature in ./features/)
-<!-- User: add notes here. Each one applies to all pages and features, current and future.
-     Agent: read this before starting any feature, and check every feature against it before it is marked done. -->
-* **No boxed sections.** Content floats on the page background. No bordered panels, cards or
-  divs around a section's content (logos, experience, clients, etc.).
-* **Logos and icons must be large.** The current sizes are far too small.
-* **No full stops in section headings** ("Experience", not "Experience.").
-* **Infographics must vary.** Each stat gets its own treatment; not a row of identical rings.
-* **Scroll animations must play when seen.** If something has already finished animating by
-  the time it's scrolled to, that's a bug: trigger on visibility, not page load.
-* **Don't duplicate calls to action.** One clear button where one will do.
+## Parked
+* Hero line "Open to: full-time / freelance / mentoring".
+* CV PDF download (`public/cv.pdf`).
+* Case studies (6x Labs, Safe Weather, EMSP) from the GitHub README.
+* OG share image (LinkedIn, Discord).
+* Custom domain `realtimebasecamp.com`: `public/CNAME`, Settings > Pages, `site` in both repos' `astro.config.mjs`.
 
-## Parked extras (add only if the user says so)
-* An "Open to: full-time / freelance / mentoring" line in the hero.
-* A CV PDF download on Bio (`public/cv.pdf`).
-* Short case studies (6x Labs, Safe Weather, EMSP) from the GitHub README.
-* An OG share image for LinkedIn and Discord link previews.
-* Custom domain later: `public/CNAME` (`realtimebasecamp.com`), set it in Settings >
-  Pages, change `site` in both repos' `astro.config.mjs`.
+## Handoff
+feat 07 · branch dev · state: dev has `bf8d9e4 9e7275d 521d47b 57fbef7 76d0963 dae2fae f793676` + tracking commit, none pushed. Feat-07 round 2 and SiteNav tweak committed; token-saver 2.0.0 re-copied (source `c91eebc` in best-practices-skills) · next: Feat-07 Q1 (UE stat options) -> non-LATER checklist items -> conventional-code -> commit on approval. LATER items wait for the user.
 
 ---
 
-# Active Handoff Buffer
-```json
-{
-  "active_feature_id": "07",
-  "note_2026_10_30": "Committed on dev (not pushed, main untouched): 9e7275d homepage redesign, 521d47b site navigation + stubs, 57fbef7 skills/tracking, then the nav panel two-layer style. Nav (Feat-09) done apart from the production go-live call. Dev server may still be running on :4399; screenshots via puppeteer-core + Edge in the scratchpad (not durable). Next: homepage notes in features/07-homepage-redesign.md (Round 2 to-do + 2026-10-30 notes) to nail down styles. Don't use portfolio PDF projects; the user plans portfolio content.",
-  "current_git_branch": "dev",
-  "last_known_ast_modification": "Homepage redesign built and uncommitted on top of bf8d9e4 (not pushed). Builds clean; 320/425/1440 checked. Stub pages products/blog/contact are in the working tree but belong on wip/pages. Tracking files and .claude/skills also uncommitted.",
-  "immediate_next_step": "Wait for the user's go-ahead, then work the 'Round 2 to-do' list in features/07-homepage-redesign.md against the Global notes here. Then get answers to its 'Open questions', apply them, run conventional-code, then commit on approval: redesign + tracking to main, stubs to a new wip/pages branch. git: %LOCALAPPDATA%\\GitHubDesktop\\app-3.6.10\\resources\\app\\git\\cmd\\git.exe"
-}
-```
+# User Feedback (global)
+<!-- Your notes for the whole project. The agent files them, ticks when done, deletes after commit. -->

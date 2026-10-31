@@ -21,7 +21,7 @@ The Editor Menu Shelf Pro docs are a separate repo
 - All features and development follow the `token-saver` skill
   (`.claude/skills/token-saver/`). Progress lives in
   `.claude/chats/personal-site/`: read `orchestrator.md` first, update the
-  active feature file as work lands, and keep its Active Handoff Buffer current.
+  active feature file as work lands, and keep its Handoff line current.
 - Run the `conventional-code` skill (`.claude/skills/conventional-code/`) on
   all work before every commit.
 - Both skills are copies from `D:\Portfolio\WebDev\best-practices-skills`.

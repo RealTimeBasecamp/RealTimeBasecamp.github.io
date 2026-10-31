@@ -1,119 +1,111 @@
 ---
 name: token-saver
-description: Tracks every feature, bug or task in .claude/chats/<task-slug>/ (an orchestrator.md plus one file per feature) so work survives a cleared context. Use at the start of any development work, when resuming a task, before committing, and when the chat grows long.
+description: Tracks every feature, bug or task in .claude/chats/<task-slug>/ (an orchestrator.md plus one file per feature) so work survives a cleared context. Keeps the user's feedback inbox clean, files their notes as decisions, tasks or questions, and never loses an open question. Use at the start of any development work, when resuming a task, before committing, and when the chat grows long.
+license: MIT
+metadata:
+  version: "2.0.0"
 ---
 
 <!-- Copied from best-practices-skills/skills/token-saver/SKILL.md. Change it there first, then re-copy. -->
 
-# Skill: token-saver
+# token-saver
 
-A rolling Chat State & Task Context Manager skill to stop wasting tokens on long chats by using isolated feature sub-states, preventing context rot, and strictly executing "Plan, Commit, and Clear" cycles.
+Small tracking files so any fresh chat can resume work cheaply, and the user can see at a glance what's open and what needs them.
 
-## 1. Directory Structure & Namespacing
-Automatically detect the repository root. For every distinct feature, bug, or task, create an isolated workspace using a kebab-case slug of the task name:
-`./.claude/chats/<task-slug>/orchestrator.md`
-`./.claude/chats/<task-slug>/features/<feature-id>-<feature-slug>.md`
-`./.claude/chats/<task-slug>/context/`
+## Files
+* `.claude/chats/<task-slug>/orchestrator.md`: feature list, project rules, handoff.
+* `.claude/chats/<task-slug>/features/<NN>-<slug>.md`: one per feature, bug or task.
+* `.claude/chats/<task-slug>/context/`: files the user supplies (PDFs, screenshots). Never chat logs.
 
-### Directory Rules:
-* **orchestrator.md**: Placed in the root of the task folder. Tracks the macro engine architecture, global file-lock registries, feature roadmaps, and the active session token handoff anchor.
-* **features/**: Contains hyper-focused markdown tracking files for individual trackable sub-tasks. Each file isolatedly tracks its own prerequisites, implementations, bugs, feedback, and line-level final reviews.
-* **context/**: Reserved strictly for external reference assets (e.g., screenshots, architecture diagrams, user-supplied sample data files). **Banned:** Do not spam chat history transcripts or rolling conversation logs into this folder.
+## Writing rules
+* **Human sections** (Open Questions, Checklist, User Feedback): short plain lines. Link every file, section or asset mentioned with a clickable relative link, e.g. `[Hero.astro](../../../../src/components/Hero.astro)`.
+* **Agent sections** (everything else): only the agent reads them. Write as tersely as you like: fragments, `->`, `;`, abbreviations. Keep every fact needed to resume; drop everything else. No prose, no history (git has it). Overwrite stale lines; never append dated notes.
+* No line cap. Concise means no repetition and no prose, never dropping a fact to save lines.
+* Split instead of trimming: when part of a feature grows big or separable (a sub-feature, a long reference list), move it to its own file (`<NN>a-<slug>.md`), link it from the parent's Checklist and the orchestrator's Features list, and read it only when working on it.
+* A file in an older layout is migrated to the templates below the first time it's touched.
 
----
+## Session start
+1. Read the orchestrator, then the active feature file.
+2. Process the inboxes (below).
+3. If any open question would change the work you're about to do, ask all of those first, in one go. Don't ask unrelated ones.
 
-## 2. Token Tracking, Context Threshold & Dynamic Re-creation
-* **Token Tracking Instruction**: The agent must inspect the total session token usage (input + output context) at the conclusion of every single turn using available CLI metadata or internal metrics.
-* **Threshold**: Monitor context size. If the active chat conversation approaches or exceeds **120,000 tokens**, immediately halt normal processing and execute the following automated reset sequence before responding further.
-* **Execution (Plan, Commit, and Clear)**: 
-  1. **Freeze**: Freeze the conversational stream and notify the user that a memory management cycle has triggered.
-  2. **Update**: Update the active feature file in `./features/` with all structural code changes, edge-case discoveries, and completed checkmarks.
-  3. **Handoff**: Write a concise, machine-readable continuation payload under the `# Active Handoff Buffer` inside `orchestrator.md`, detailing the exact working Git branch and last uncommitted state.
-  4. **Nuke**: Issue the `/clear` command or call the environment's context reset tool to instantly purge the active chat history.
-  5. **Resume**: The initial prompt of the fresh conversation must exclusively be: *"Read ./.claude/chats/<task-slug>/orchestrator.md and resume the active feature task."*
+## User Feedback inbox
+* Last section of every file, so the user can jump to it. User's words only: the agent never writes notes there.
+* File each unticked note, rewritten tersely: site-wide -> orchestrator `## Design`; feature choice -> `## Decisions`; work -> `## Checklist`; unclear -> `## Open Questions`. One note can go to several.
+* Append a pointer to the note (`-> Checklist`, `-> Q2`). Never reword it.
+* Tick `[x]` only when its work is **done** (filed is not done). Delete ticked notes after the commit that lands them.
 
----
+## Open Questions
+* Every question for the user lives in the feature it affects (global ones: the active feature). Never only in chat: chat is lost on `/clear`.
+* Number them `Q1`, `Q2`. Tasks blocked by one say so: `[ ] Missing logos (Q6)`.
+* Answered: delete the question, record the answer in Decisions, the Checklist or the code, and drop its `(Qn)` tags.
+* End every reply that leaves questions open with `N open questions in [file](link)`, plus the questions if there are five or fewer.
 
-## 3. Session End, Quality Gate & Commit Workflow
-When a specific feature or the entire task is flagged as complete:
-1. **Linting & Best Practices**: Automatically execute the `conventional-code` skill (`./.claude/skills/conventional-code/`) against all modified files tracked in the target feature state.
-2. **Review Generation**: Populate the `# Final review & Tests` block inside the specific feature file. Line numbers must be exact and extracted directly from `git diff` boundaries.
-3. **Commit Phase**: Wait explicitly for user authorization. Once approved, split unrelated modifications into separate Git hunks/commits matching the isolated feature.
-4. **Lifecycle Cleanup**: After commit as the user if they want to delete the entire task subfolder (`./.claude/chats/<task-slug>/`) completely upon complete epic wrap-up, unless the user explicitly commands to preserve it.
-5. **New Chat Transition**: After the commit or when token limit has reached, output a standalone, copy-pasteable block for the user to easily transition to a fresh chat if they choose:
-   ```
-   🚀 Ready for a fresh context window? Open a new chat and paste:
-   "Read ./.claude/chats/<task-slug>/orchestrator.md and resume the active feature task."
-   ```
+## Checklist
+* Open work only, plus one line per landed batch: `* Round 2 done (a1b2c3d)`. Fold ticked items into that line after each commit.
+* Bugs are tasks: `[ ] bug: stats finish before seen`. A fix that teaches a lasting rule also becomes a Decision.
+* `[-]` = dropped or superseded (say by what).
 
----
+## Decisions
+* One line per user choice. A newer choice replaces any older one it contradicts.
 
-## 4. Template: orchestrator.md Layout
-```markdown
-# Epic Architecture: [Insert Task Slug Here]
-
-## Technical Context
-* [High-level summary of the macro engine/architecture being modified]
-
-## Master Feature Tree & Routing Matrix
-* [ ] [Feat-01: Feature Name](./features/01-feature-name.md)
-* [ ] [Feat-02: Feature Name](./features/02-feature-name.md)
-
-## Global File-Lock Registry
-<!-- Mapping to avoid multi-feature collision -->
-* `./src/components/Signup.tsx` -> Locked by `Feat-01` (Status: Active)
-* `./src/styles/global.css` -> Locked by `Feat-02` (Status: Pending)
-
-## Macro Architectural Constraints & Decisions
-* [List global rules, structural paradigms, or hard constraints]
-
----
-
-# Active Handoff Buffer
-```json
-{
-  "active_feature_id": "01",
-  "current_git_branch": "feature/auth-layer",
-  "last_known_ast_modification": "Exported validation hooks on line 42 of Signup.tsx",
-  "immediate_next_step": "Implement the blank string edge case inside features/01-feature-name.md"
-}
+## Long chats
+When the chat grows long, before a `/clear`, and after each commit: update the feature file and `## Handoff`, then print:
 ```
+🚀 Fresh chat? Paste: "Read ./.claude/chats/<task-slug>/orchestrator.md and resume the active feature task."
 ```
 
----
+## Commit
+1. Run the `conventional-code` skill on the changed files.
+2. Wait for the user's approval. Split unrelated changes into separate commits.
+3. After the commit: fold the Checklist, delete ticked inbox notes, update `## Handoff`.
+4. Epic finished: ask before deleting the task folder.
 
-## 5. Template: `./features/<id>-<slug>.md` Layout
+## Template: orchestrator.md
 ```markdown
-# Feature State: [Insert Feature ID and Name]
+# <task-slug>
+Ctx: <stack; deploy; related repos>
 
-## Upstream Prerequisites
-* **Depends On:** [e.g., Feat-01 Architecture must be marked Complete]
-* **Downstream Blocked Items:** [e.g., Feat-03 cannot begin until this file passes QC]
+## Features
+* [ ] [Feat-01: <name>](./features/01-<slug>.md) <status, terse>
 
-## Feature Objective
-* [Granular goal of this specific isolated feature tracking file]
+## Constraints
+* <hard rules, tooling quirks, where rules live>
 
-## Implementation Checklist
-* [ ] Task 1
-* [ ] Task 2
+## Design
+* <user's site-wide choices; check every feature against these before done>
+
+## Parked
+* <ideas to add only if the user asks>
+
+## Handoff
+feat 01 · branch <b> · state <uncommitted work / last commit> · next <step>
 
 ---
 
-# Bugs & Edge Cases
-<!-- User or Agent: Append discovered bugs, breaking changes, or unexpected system quirks specific to this feature branch here -->
+# User Feedback (global)
+<!-- Your notes for the whole project. The agent files them, ticks when done, deletes after commit. -->
+```
 
+## Template: features/<NN>-<slug>.md
+```markdown
+# Feat-NN: <name>
+Goal: <one line> · Deps: <Feat-xx> · Blocks: <Feat-yy>
+
+## Open Questions
+* Q1: <question> ([file](link))
+
+## Checklist
+* [ ] <task> ([file](link))
+
+## Decisions
+* <choice>
+
+## Verify
+* <optional: how to check by hand, e.g. "320px: no sideways scroll">
+
+---
 
 # User Feedback
-<!-- User: Scroll to the bottom of this specific feature file and paste text feedback, code change requests, or design iterations here -->
-
-
-# Final review & Tests
-<!-- AI: Populate this section ONLY when this specific feature is flagged complete. Derive line ranges from the active git diff. Ensure relative file paths are fully clickable links using the format [./path/to/file](./path/to/file). -->
-
-### File Code diff & Quality Control
-* [ ] [./src/components/TargetFile.tsx](./src/components/TargetFile.tsx)
-    * **Feature / Edit List:**
-        * [ ] Lines 45-62: Summary of implementation/modifications made
-            1. **Verification Test 1:** [Step-by-step test condition for manual or automated run]
-            2. **Verification Test 2:** [Step-by-step test condition for manual or automated run]
+<!-- Your notes for this feature. The agent files them, ticks when done, deletes after commit. -->
 ```
