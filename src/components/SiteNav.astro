@@ -120,11 +120,11 @@ const attrs = ({ href, external }: NavLink) => ({
 		opacity: 1;
 		transition-delay: 0s;
 	}
-	/* Two layers, like Linear's: an outer frame and a darker inner section
-	   holding the items. */
+	/* Two layers, like Linear's: a dark outer frame and a lighter inner
+	   section holding the items, each with its own border. */
 	.site-nav__card {
 		padding: 0.375rem;
-		background: var(--ground-lift);
+		background: var(--ground);
 		border: 1px solid var(--line);
 		border-radius: 12px;
 		box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
@@ -140,7 +140,7 @@ const attrs = ({ href, external }: NavLink) => ({
 		margin: 0;
 		padding: 0.5rem 0;
 		list-style: none;
-		background: var(--ground);
+		background: var(--ground-lift);
 		border: 1px solid var(--line);
 		border-radius: 8px;
 	}
