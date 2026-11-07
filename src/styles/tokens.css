@@ -21,10 +21,19 @@
 	--text-soft:   #c0c2c7;
 	--muted:       #888b96;
 
-	/* accent */
-	--accent:      #b3c7ff;
-	--accent-deep: #3447ff;
-	--accent-low:  #131e4f;
+	/* accent: TRIAL on this site only (not yet in the plugin docs copy).
+	   Teal from the RT Basecamp logo replaces the periwinkle everywhere; the
+	   periwinkle stays as --accent-blue to mix back in where it suits. */
+	--accent:      #00bbbf;
+	--accent-blue: #b3c7ff;
+	--accent-deep: #006880;
+	--accent-low:  #0b2a30;
+
+	/* spacing: TRIAL on this site only (not yet in the plugin docs copy).
+	   One rhythm for every page: sections own the space between them,
+	   components add no outer margins of their own. */
+	--section-gap: clamp(3.5rem, 10vw, 8.25rem); /* between sections, and before the footer */
+	--block-gap:   clamp(2.5rem, 6vw, 5.25rem);  /* between blocks inside one section */
 
 	--font-sans: "IBM Plex Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
 	--font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;

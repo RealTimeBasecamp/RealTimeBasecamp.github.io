@@ -5,7 +5,8 @@
  * are in src/data/.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
+import ProfileHero from '../components/ProfileHero.astro';
+import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import Section from '../components/Section.astro';
 import Stats from '../components/Stats.astro';
 import Timeline from '../components/Timeline.astro';
@@ -17,16 +18,28 @@ import { CLIENTS, SOFTWARE } from '../data/logos';
 import { EXPERIENCE } from '../data/experience';
 import { CONTACT_LINK } from '../data/nav';
 import { HIRE_CTA } from '../data/cta';
+import { HOME_STATS } from '../data/stats';
+import { PROFILE_ACTIONS } from '../data/profile';
+import { ARTSTATION_URL, SHOWREEL_ID } from '../data/links';
 ---
 
 <BaseLayout
 	title="Rob Fraser | Real Time Basecamp"
 	description="Rob Fraser is a UE5 Technical Artist, Pipeline Developer and mentor with 14 years of experience in Unreal Engine."
 >
-	<Hero />
+	<ProfileHero
+		primary={CONTACT_LINK && { href: CONTACT_LINK.href, label: PROFILE_ACTIONS.hire }}
+		secondary={{ href: ARTSTATION_URL, label: PROFILE_ACTIONS.portfolio, external: true }}
+	>
+		<YouTubeEmbed id={SHOWREEL_ID} title="Rob Fraser UE5 Generalist Showreel 2026" />
+	</ProfileHero>
 
 	<Section title="Experience" id="experience">
 		<Timeline items={EXPERIENCE} />
+	</Section>
+
+	<Section>
+		<Stats items={HOME_STATS} />
 	</Section>
 
 	<Section title="Clients" id="clients">
@@ -36,10 +49,6 @@ import { HIRE_CTA } from '../data/cta';
 
 	<Section title="Software" id="software">
 		<LogoGrid items={SOFTWARE} />
-	</Section>
-
-	<Section>
-		<Stats />
 	</Section>
 
 	<Section id="mentoring">

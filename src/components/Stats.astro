@@ -1,44 +1,75 @@
 ---
 /**
- * Row of three infographics, each drawn its own way (see `kind` in
+ * A row of small infographics, each drawn its own way (see `kind` in
  * src/data/stats.ts): a logo that fills with colour, a staircase of bars, a
- * grid of dots.
- * Each one plays once, when it is well inside the viewport, and its number
- * counts up alongside. The HTML holds the final state, so without JS or with
- * reduced motion the stats are simply there.
+ * grid of dots, a row of stars, a clock. The marks are mid-sized; the
+ * number (or words, for `text` stats) and label carry the row. Each plays once, when it is well inside the
+ * viewport, and its number counts up alongside. The HTML holds the final
+ * state, so without JS or with reduced motion the stats are simply there.
+ *
+ * Props:
+ *   items   Stat[] from src/data/stats.ts (HOME_STATS or MENTORING_STATS)
+ *   colour  any CSS colour for the marks; defaults to the site accent
  */
-import { STATS } from '../data/stats';
+import StarIcon from '../assets/icons/star.svg';
+import type { Stat } from '../data/stats';
+
+interface Props {
+	items: Stat[];
+	colour?: string;
+}
+const { items, colour } = Astro.props;
 
 /** Columns for the dot grid: as square as the count allows (30 -> 6 x 5). */
 const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
+/** Digits after the point, so 4.9 counts up as 4.9 rather than 5. */
+const decimals = (n: number) => (String(n).split('.')[1] ?? '').length;
 ---
 
-<ul class="stats">
-	{STATS.map(({ value, suffix = '', label, kind, icon: Icon }) => {
-		const units = Array.from({ length: value }, (_, i) => i);
+<ul class="stats" style={`--count: ${items.length};${colour ? ` --stat-colour: ${colour};` : ''}`}>
+	{items.map(({ value, suffix = '', label, kind, icon: Icon, rating = 5, text }) => {
+		const units = Array.from({ length: Math.round(value) }, (_, i) => i);
 		return (
-			<li class:list={['stat', `stat--${kind}`]} style={`--n: ${value}`}>
-				<div class="stat__art">
+			<li class:list={['stat', `stat--${kind}`]} style={`--n: ${units.length}`}>
+				<div class="stat__art" aria-hidden="true">
 					{kind === 'fill' && Icon && (
-						<span class="fill" aria-hidden="true">
+						<span class="fill">
 							<Icon class="fill__base" />
 							<Icon class="fill__top" />
 						</span>
 					)}
 					{kind === 'bars' && (
-						<span class="bars" aria-hidden="true">
+						<span class="bars">
 							{units.map((i) => <span class="bars__bar" style={`--i: ${i}`} />)}
 						</span>
 					)}
 					{kind === 'dots' && (
-						<span class="dots" style={`--cols: ${dotColumns(value)}`} aria-hidden="true">
+						<span class="dots" style={`--cols: ${dotColumns(value)}`}>
 							{units.map((i) => <span class="dots__dot" style={`--i: ${i}`} />)}
 						</span>
 					)}
+					{kind === 'stars' && (
+						<span class="stars" style={`--frac: ${rating / 5}`}>
+							<span class="stars__row stars__row--base">
+								{Array.from({ length: 5 }, () => <StarIcon />)}
+							</span>
+							<span class="stars__row stars__row--top">
+								{Array.from({ length: 5 }, () => <StarIcon />)}
+							</span>
+						</span>
+					)}
+					{kind === 'clock' && (
+						<svg class="clock" viewBox="0 0 40 40">
+							<circle class="clock__face" cx="20" cy="20" r="17" />
+							<line class="clock__hand" x1="20" y1="20" x2="20" y2="8" />
+							<circle class="clock__pin" cx="20" cy="20" r="2" />
+						</svg>
+					)}
 				</div>
-				<span class="stat__value">
-					{Icon && kind !== 'fill' && <Icon class="stat__icon" aria-hidden="true" />}
-					<span><span class="stat__num" data-to={value}>{value}</span>{suffix}</span>
+				<span class:list={['stat__value', { 'stat__value--text': text }]}>
+					{text ?? (
+						<><span class="stat__num" data-to={value} data-decimals={decimals(value)}>{value}</span>{suffix}</>
+					)}
 				</span>
 				<p class="stat__label">{label}</p>
 			</li>
@@ -47,15 +78,13 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 </ul>
 
 <style>
-	/* Three across at every width; the art shrinks on phones rather than
-	   stacking into a screen-high column. Extra room above and below: the
-	   row has no heading and follows a dense logo grid (Software), so it
-	   needs air to read as its own section. */
+	/* One row at every width; the small marks fit four across even on a
+	   320px phone. No outer margin: the Section owns the spacing. */
 	.stats {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.75rem;
-		margin: 2.5rem 0;
+		grid-template-columns: repeat(var(--count), 1fr);
+		gap: 1rem;
+		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
@@ -65,46 +94,45 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 
 	.stat {
 		/* Every animation in a stat spreads its units over this time. */
-		--play: 2.2s;
+		--play: 1.8s;
+		/* Mark colour: the `colour` prop, else the site accent. */
+		--mark: var(--stat-colour, var(--accent));
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.5rem;
 		text-align: center;
-		/* The number scales with the column. */
-		container-type: inline-size;
 	}
+	/* Mid-sized marks: the 11rem originals were too loud, 2.75rem too
+	   small. */
 	.stat__art {
-		position: relative;
-		width: min(11rem, 100%);
-		aspect-ratio: 1;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		width: min(7rem, 100%);
+		height: 4.5rem;
+		margin-bottom: 0.5rem;
 	}
 
 	.stat__value {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.3em;
-		font-size: clamp(1.5rem, 20cqi, 3rem);
+		font-size: clamp(1.625rem, 4.5vw, 2.5rem);
 		font-weight: 600;
 		line-height: 1;
 		letter-spacing: -0.02em;
 		font-variant-numeric: tabular-nums;
 	}
-	/* :global because the class lands on an imported SVG component. */
-	.stat__value :global(.stat__icon) {
-		height: 0.7em;
-		width: auto;
-		color: var(--text-soft);
+	/* Words run longer than numbers; a step smaller keeps them to one line
+	   on most phones. */
+	.stat__value--text {
+		font-size: clamp(1.125rem, 3.5vw, 1.75rem);
+		line-height: 1.43;
 	}
 	.stat__label {
 		margin: 0;
-		max-width: 20ch;
-		font-size: 0.8125rem;
+		max-width: 18ch;
+		font-size: 0.875rem;
 		line-height: 1.4;
-		color: var(--text-soft);
-	}
-	@media (min-width: 40rem) {
-		.stat__label { font-size: 1rem; }
+		color: var(--muted);
 	}
 
 	/* --- fill: the logo colours in from bottom to top. Two copies stacked:
@@ -112,18 +140,15 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 	   the accent: Epic's brand guidelines don't allow recolouring the logo. --- */
 	.fill {
 		position: relative;
-		display: block;
-		width: 100%;
-		height: 100%;
-		padding: 6%;
-		box-sizing: border-box;
+		width: 4.5rem;
+		height: 4.5rem;
 	}
 	.fill :global(.fill__base),
 	.fill :global(.fill__top) {
 		position: absolute;
-		inset: 6%;
-		width: 88%;
-		height: 88%;
+		inset: 0;
+		width: 100%;
+		height: 100%;
 	}
 	.fill :global(.fill__base) { color: var(--line); }
 	.fill :global(.fill__top) {
@@ -137,17 +162,15 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 	.bars {
 		display: flex;
 		align-items: flex-end;
-		gap: 6%;
+		gap: 4px;
+		width: 100%;
 		height: 100%;
-		padding: 8% 4% 0;
-		box-sizing: border-box;
-		border-bottom: 2px solid var(--line);
 	}
 	.bars__bar {
 		flex: 1;
 		height: calc((var(--i) + 1) / var(--n) * 100%);
-		border-radius: 3px 3px 0 0;
-		background: var(--accent);
+		border-radius: 1px;
+		background: var(--mark);
 		transform-origin: bottom;
 		transition: transform 0.5s var(--ease);
 		transition-delay: calc(var(--i) * var(--play) / var(--n));
@@ -157,39 +180,79 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 	/* --- dots: one per person, lighting up in turn --- */
 	.dots {
 		display: grid;
-		grid-template-columns: repeat(var(--cols), 1fr);
-		align-content: center;
-		gap: 10%;
-		height: 100%;
-		padding: 6%;
-		box-sizing: border-box;
+		grid-template-columns: repeat(var(--cols), 0.5rem);
+		gap: 0.32rem;
+		align-content: end;
 	}
 	.dots__dot {
 		aspect-ratio: 1;
 		border-radius: 50%;
-		background: var(--accent);
-		transition: background-color 0.3s ease, transform 0.3s var(--ease);
+		background: var(--mark);
+		transition: background-color 0.3s ease;
 		transition-delay: calc(var(--i) * var(--play) / var(--n));
 	}
-	.stat.is-pending .dots__dot {
-		background: var(--line);
-		transform: scale(0.6);
+	.stat.is-pending .dots__dot { background: var(--line); }
+
+	/* --- stars: an accent row over a dim one, revealed left to right up to
+	   --frac (4.9 / 5 leaves the last star just short) --- */
+	.stars {
+		position: relative;
+		display: block;
 	}
+	.stars__row {
+		display: flex;
+		gap: 0.2rem;
+	}
+	.stars__row :global(svg) {
+		width: 1.3rem;
+		height: 1.3rem;
+	}
+	.stars__row--base { color: var(--line); }
+	.stars__row--top {
+		position: absolute;
+		inset: 0;
+		color: var(--mark);
+		clip-path: inset(0 calc((1 - var(--frac)) * 100%) 0 0);
+		transition: clip-path var(--play) var(--ease);
+	}
+	.stat.is-pending .stars__row--top { clip-path: inset(0 100% 0 0); }
+
+	/* --- clock: the hand sweeps a quarter turn, round to "a few hours" --- */
+	.clock {
+		width: 4.5rem;
+		height: 4.5rem;
+	}
+	.clock__face {
+		fill: none;
+		stroke: var(--line);
+		stroke-width: 2;
+	}
+	.clock__hand {
+		stroke: var(--mark);
+		stroke-width: 2.5;
+		stroke-linecap: round;
+		transform-origin: 20px 20px;
+		transform: rotate(90deg);
+		transition: transform var(--play) var(--ease);
+	}
+	.clock__pin { fill: var(--mark); }
+	.stat.is-pending .clock__hand { transform: rotate(0deg); }
 </style>
 
 <script>
 	/* Each stat plays once it is three quarters visible and clear of the
 	   bottom edge, so it is never over before the visitor gets there. Skipped
 	   for reduced motion or old browsers, which keep the final values. */
-	const DURATION = 2200;
+	const DURATION = 1800;
 	const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
 
 	const countUp = (num: HTMLElement) => {
 		const to = Number(num.dataset.to);
+		const places = Number(num.dataset.decimals);
 		const start = performance.now();
 		const tick = (now: number) => {
 			const t = Math.min((now - start) / DURATION, 1);
-			num.textContent = String(Math.round(to * (1 - Math.pow(1 - t, 3))));
+			num.textContent = (to * (1 - Math.pow(1 - t, 3))).toFixed(places);
 			if (t < 1) requestAnimationFrame(tick);
 		};
 		requestAnimationFrame(tick);
@@ -209,7 +272,7 @@ const dotColumns = (n: number) => Math.ceil(Math.sqrt(n));
 		document.querySelectorAll<HTMLElement>('.stat').forEach((stat) => {
 			stat.classList.add('is-pending');
 			const num = stat.querySelector<HTMLElement>('.stat__num');
-			if (num) num.textContent = '0';
+			if (num) num.textContent = (0).toFixed(Number(num.dataset.decimals));
 			observer.observe(stat);
 		});
 	}

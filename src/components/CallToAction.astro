@@ -8,21 +8,24 @@
  *   title  the large line
  *   text   the sentence under it
  *   label  button text; the arrow is added here
- *   href   button target
+ *   href      button target
+ *   external  open the target in a new tab
  */
 interface Props {
 	title: string;
 	text: string;
 	label: string;
 	href: string;
+	external?: boolean;
 }
-const { title, text, label, href } = Astro.props;
+const { title, text, label, href, external = false } = Astro.props;
+const newTab = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 ---
 
 <div class="cta">
 	<p class="cta__title">{title}</p>
 	<p class="cta__text">{text}</p>
-	<a class="btn cta__btn" href={href}>{label} &#8594;</a>
+	<a class="btn cta__btn" href={href} {...newTab}>{label} &#8594;</a>
 </div>
 
 <style>
@@ -31,12 +34,16 @@ const { title, text, label, href } = Astro.props;
 		flex-direction: column;
 		align-items: center;
 		gap: 0.75rem;
-		/* Room on both sides so it reads as its own moment, not part of the
-		   grid above or the section below. */
-		margin: 4.5rem 0 3rem;
+		margin: 0;
 		text-align: center;
 	}
+	/* Under other content in the same section (e.g. the Clients logos), one
+	   block gap; alone in a section, the section's own gap is enough. */
+	:global(*) + .cta {
+		margin-top: var(--block-gap);
+	}
 	.cta__title {
+		max-width: 28ch;
 		margin: 0;
 		font-size: clamp(1.5rem, 3vw, 2rem);
 		font-weight: 600;

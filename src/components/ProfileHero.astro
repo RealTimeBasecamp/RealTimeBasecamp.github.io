@@ -1,0 +1,216 @@
+---
+/**
+ * The profile card that opens a page: square photo, badge, name (the
+ * page's h1), job title, buttons and LinkedIn, optional skills pills, then
+ * an optional intro paragraph and whatever the page slots in below (e.g.
+ * the showreel). Shared by the homepage and the mentoring page; each passes
+ * its own buttons. Name, title, badge and photo come from
+ * src/data/profile.ts.
+ *
+ * Props:
+ *   primary    { href, label, external? } white button; the arrow is added here
+ *   secondary  { href, label, external? } outlined button beside it
+ *   skills     pill labels under the buttons
+ *   intro      paragraph under the card
+ *
+ * Slots:
+ *   default    content under the card and intro
+ */
+import { Image } from 'astro:assets';
+import AwardIcon from '../assets/icons/award.svg';
+import LinkedInIcon from '../assets/icons/linkedin.svg';
+import { LINKEDIN_URL } from '../data/links';
+import { PROFILE } from '../data/profile';
+
+interface Action {
+	href: string;
+	label: string;
+	external?: boolean;
+}
+interface Props {
+	primary?: Action;
+	secondary?: Action;
+	skills?: string[];
+	intro?: string;
+}
+const { primary, secondary, skills, intro } = Astro.props;
+const newTab = (action: Action) => (action.external ? { target: '_blank', rel: 'noopener noreferrer' } : {});
+---
+
+<section class="profile gutter">
+	<div class="profile__card reveal reveal-1">
+		<Image
+			class="profile__photo"
+			src={PROFILE.photo}
+			alt={PROFILE.name}
+			widths={[240, 480]}
+			sizes="15rem"
+			loading="eager"
+		/>
+		<div class="profile__body">
+			<p class="profile__badge">
+				<AwardIcon aria-hidden="true" />
+				{PROFILE.badge}
+			</p>
+			<h1 class="profile__name">{PROFILE.name}</h1>
+			<p class="profile__title">{PROFILE.jobTitle}</p>
+			<div class="profile__actions">
+				{primary && (
+					<a class="btn profile__primary" href={primary.href} {...newTab(primary)}>{primary.label} &#8594;</a>
+				)}
+				{secondary && (
+					<a class="btn profile__secondary" href={secondary.href} {...newTab(secondary)}>{secondary.label} &#8594;</a>
+				)}
+				<a class="profile__social" href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+					<LinkedInIcon aria-hidden="true" />
+				</a>
+			</div>
+			{skills && (
+				<ul class="profile__skills" aria-label="Skills">
+					{skills.map((skill) => <li class="profile__skill">{skill}</li>)}
+				</ul>
+			)}
+		</div>
+	</div>
+	{intro && <p class="profile__intro reveal reveal-2">{intro}</p>}
+	<div class="profile__extra reveal reveal-3">
+		<slot />
+	</div>
+</section>
+
+<style>
+	.profile {
+		padding-top: var(--section-gap);
+	}
+
+	.profile__card {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		padding: 1.5rem;
+		border: 1px solid var(--line);
+		border-radius: 6px;
+		background: var(--surface);
+	}
+	@media (min-width: 40rem) {
+		.profile__card {
+			flex-direction: row;
+			align-items: center;
+			gap: 2.5rem;
+			padding: 2rem;
+		}
+	}
+	.profile__photo {
+		display: block;
+		flex-shrink: 0;
+		width: min(15rem, 100%);
+		height: auto;
+		aspect-ratio: 1;
+		border-radius: 6px;
+		object-fit: cover;
+	}
+
+	.profile__body {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.75rem;
+	}
+	.profile__badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		margin: 0;
+		padding: 0.3rem 0.75rem 0.3rem 0.55rem;
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		background: var(--ground);
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: var(--text);
+	}
+	.profile__badge :global(svg) {
+		width: 1.1rem;
+		height: 1.1rem;
+		color: var(--accent);
+	}
+	.profile__name {
+		font-size: clamp(2.25rem, 5vw, 3.25rem);
+		line-height: 1.06;
+		letter-spacing: -0.025em;
+	}
+	.profile__title {
+		margin: 0;
+		color: var(--text-soft);
+		font-size: 1.0625rem;
+	}
+
+	.profile__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+	}
+	/* Both buttons share one height, which the LinkedIn mark matches. */
+	.profile__primary,
+	.profile__secondary {
+		height: 2.5rem;
+		padding: 0 1.1rem;
+		font-size: 0.875rem;
+	}
+	/* Same white as the masthead's Contact me: the page's main action. */
+	.profile__primary {
+		background: var(--text);
+		color: var(--ground);
+	}
+	.profile__primary:hover { background: var(--text-soft); }
+	.profile__secondary {
+		border-color: var(--line);
+		color: var(--text);
+	}
+	.profile__secondary:hover {
+		border-color: var(--muted);
+		background: rgba(255, 255, 255, 0.05);
+	}
+	/* No frame: the logo itself fills the button's height. */
+	.profile__social {
+		display: block;
+		color: var(--text-soft);
+		line-height: 0;
+		transition: color 0.2s ease;
+	}
+	.profile__social:hover { color: var(--text); }
+	.profile__social :global(svg) {
+		width: 2.5rem;
+		height: 2.5rem;
+	}
+
+	.profile__skills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0.5rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	.profile__skill {
+		padding: 0.3rem 0.75rem;
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		background: var(--ground);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: var(--text-soft);
+	}
+
+	.profile__intro {
+		margin: 2rem 0 0;
+		max-width: 68ch;
+		font-size: 1.0625rem;
+		color: var(--text-soft);
+	}
+	.profile__extra:not(:empty) {
+		margin-top: 1.5rem;
+	}
+</style>
