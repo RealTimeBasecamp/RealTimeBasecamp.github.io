@@ -1,0 +1,39 @@
+---
+/**
+ * Dashed grey box standing in for content that isn't decided or written
+ * yet, labelled with what goes there. Only for rough page outlines on the
+ * dev branch: a page using it must not go live.
+ *
+ * Props:
+ *   label  what will replace the box
+ *   ratio  CSS aspect-ratio for media stand-ins (e.g. '16 / 9'); omit for
+ *          a short text-height box
+ */
+interface Props {
+	label: string;
+	ratio?: string;
+}
+const { label, ratio } = Astro.props;
+---
+
+<div class="placeholder" style={ratio && `aspect-ratio: ${ratio}`}>
+	<span>{label}</span>
+</div>
+
+<style>
+	.placeholder {
+		display: grid;
+		place-items: center;
+		min-height: 4rem;
+		padding: 1rem;
+		border: 1px dashed var(--line);
+		border-radius: 6px;
+		background: var(--ground-lift);
+		text-align: center;
+	}
+	.placeholder span {
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		color: var(--muted);
+	}
+</style>

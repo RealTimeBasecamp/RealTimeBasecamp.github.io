@@ -1,7 +1,8 @@
 ---
 /**
- * One page per product that has a `slug` in src/data/products.ts. Stub:
- * content still to be planned
+ * One page per product that has a `slug` in src/data/products.ts. Rough
+ * outline: banner, title, text and call to action, with placeholders for
+ * the page preview and the free download form
  * (tracked in .claude/chats/personal-site/features/04-products.md).
  * Lives on the dev branch, never main, until it is finished.
  */
@@ -9,6 +10,7 @@ import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Section from '../../components/Section.astro';
 import ProductBanner from '../../components/ProductBanner.astro';
+import Placeholder from '../../components/Placeholder.astro';
 import { PRODUCTS, type Product } from '../../data/products';
 
 export const getStaticPaths = (() =>
@@ -24,7 +26,20 @@ const { item } = Astro.props;
 ---
 
 <BaseLayout title={`${item.title} | Rob Fraser`} description={item.text ?? item.title}>
-	<Section title={item.title}>
-		{item.banner && <ProductBanner image={item.banner} />}
+	<Section title={item.title} cta={item.cta}>
+		<Fragment slot="intro">
+			{item.text ?? '[Description: what it is and who it is for, in your words]'}
+		</Fragment>
+		{item.banner
+			? <ProductBanner image={item.banner} />
+			: <Placeholder label="Banner image, 16:9" ratio="16 / 9" />}
+	</Section>
+
+	<Section title="Inside">
+		<Placeholder label="Animated page preview (AnimatedCheatsheet.gif as a looping video)" ratio="16 / 9" />
+	</Section>
+
+	<Section title="Get it free">
+		<Placeholder label="Free download form: name + email, PDF delivered (beehiiv, see Feat-04)" />
 	</Section>
 </BaseLayout>

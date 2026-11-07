@@ -1,14 +1,27 @@
 ---
 /**
- * Contact page, target of the masthead's Contact me button. Will hold a
- * contact form; the form service is still to be chosen
+ * Contact page, target of the masthead's Contact me button and the
+ * homepage's hire call to action. Rough outline: a placeholder for the
+ * form (service still to be chosen) and the profile links
  * (tracked in .claude/chats/personal-site/features/06-contact.md).
  * Lives on the dev branch, never main, until it is finished.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/Section.astro';
+import Placeholder from '../components/Placeholder.astro';
+import ContactLinks from '../components/ContactLinks.astro';
 ---
 
 <BaseLayout title="Contact | Rob Fraser" description="Get in touch with Rob Fraser.">
-	<Section title="Contact me" />
+	<Section title="Contact me">
+		<Placeholder label="Intro: what to get in touch about (freelance, full-time, mentoring), in your words" />
+	</Section>
+
+	<Section title="Send a message">
+		<Placeholder label="Form: name, email, Full-time / Freelance / Mentoring, message (service TBC, Feat-06)" ratio="16 / 7" />
+	</Section>
+
+	<Section title="Elsewhere">
+		<ContactLinks />
+	</Section>
 </BaseLayout>

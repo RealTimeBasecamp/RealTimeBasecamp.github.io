@@ -1,13 +1,25 @@
 ---
 /**
- * Blog index. Stub: left empty until the homepage's look is settled
- * (tracked in .claude/chats/personal-site/features/05-blog.md).
+ * Blog index. Rough outline: intro and placeholder post cards until the
+ * MDX collection exists (tracked in .claude/chats/personal-site/features/05-blog.md).
  * Lives on the dev branch, never main, until it is finished.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Section from '../../components/Section.astro';
+import Placeholder from '../../components/Placeholder.astro';
 ---
 
 <BaseLayout title="Blog | Rob Fraser" description="Posts by Rob Fraser.">
-	<Section title="Blog" />
+	<Section title="Blog">
+		<Fragment slot="intro">Posts are on the way. Join the newsletter below to get them first.</Fragment>
+		<Placeholder label="Post card: thumbnail, title, date, one-line summary" ratio="16 / 5" />
+	</Section>
+
+	<Section>
+		<Placeholder label="Post card" ratio="16 / 5" />
+	</Section>
+
+	<Section>
+		<Placeholder label="Post card" ratio="16 / 5" />
+	</Section>
 </BaseLayout>

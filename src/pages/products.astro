@@ -1,13 +1,26 @@
 ---
 /**
- * Products page. Stub: left empty until the homepage's look is settled
+ * Products page. Rough outline: the homepage's product cards plus
+ * placeholders for what is still to decide
  * (tracked in .claude/chats/personal-site/features/04-products.md).
  * Lives on the dev branch, never main, until it is finished.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/Section.astro';
+import ProductList from '../components/ProductList.astro';
+import Placeholder from '../components/Placeholder.astro';
 ---
 
 <BaseLayout title="Products | Rob Fraser" description="Products by Rob Fraser.">
-	<Section title="Products" />
+	<Section title="Products">
+		<Placeholder label="Intro: one or two lines about the tools and resources, in your words" />
+	</Section>
+
+	<Section>
+		<Placeholder label="Filter by tag: All / Plugin / PDF" />
+	</Section>
+
+	<Section>
+		<ProductList />
+	</Section>
 </BaseLayout>
