@@ -1,0 +1,34 @@
+---
+/**
+ * Dev-only design previews. getStaticPaths returns nothing in a production
+ * build, so these pages never reach dist/ or the live site.
+ *
+ * /dev/stat-colours/: the infographics in the current accent and the three
+ * logo colours (lockup-colour-on-dark.svg), for the user to pick one.
+ * Delete the option rows (or this file) once a colour is chosen.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Section from '../../components/Section.astro';
+import Stats from '../../components/Stats.astro';
+import { HOME_STATS, MENTORING_STATS } from '../../data/stats';
+
+export const getStaticPaths = (() =>
+	import.meta.env.DEV ? [{ params: { preview: 'stat-colours' } }] : []) satisfies GetStaticPaths;
+
+const OPTIONS = [
+	{ name: 'Periwinkle (now --accent-blue) #b3c7ff', colour: 'var(--accent-blue)' },
+	{ name: 'Logo teal #00bbbf', colour: '#00bbbf' },
+	{ name: 'Logo aqua #00ffe2', colour: '#00ffe2' },
+	{ name: 'Logo deep teal #006880', colour: '#006880' },
+];
+---
+
+<BaseLayout title="Stat colours | Dev preview" description="Dev-only preview.">
+	{OPTIONS.map(({ name, colour }) => (
+		<Section title={name}>
+			<Stats items={HOME_STATS} colour={colour} />
+			<Stats items={MENTORING_STATS} colour={colour} />
+		</Section>
+	))}
+</BaseLayout>
