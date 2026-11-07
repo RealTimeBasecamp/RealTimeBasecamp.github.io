@@ -1,0 +1,52 @@
+---
+/**
+ * A stack of small cards, each a big accent figure and one line, for
+ * summarising a paragraph at a glance (e.g. beside SplitSection text).
+ *
+ * Props:
+ *   items  { figure, text }[]
+ */
+interface Props {
+	items: { figure: string; text: string }[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="highlights">
+	{items.map(({ figure, text }) => (
+		<li class="highlights__card">
+			<span class="highlights__figure">{figure}</span>
+			<span class="highlights__text">{text}</span>
+		</li>
+	))}
+</ul>
+
+<style>
+	.highlights {
+		display: grid;
+		gap: 0.75rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.highlights__card {
+		display: grid;
+		gap: 0.2rem;
+		padding: 1rem 1.25rem;
+		border: 1px solid var(--line);
+		border-left: 3px solid var(--accent);
+		border-radius: 6px;
+		background: var(--surface);
+	}
+	.highlights__figure {
+		font-size: 1.375rem;
+		font-weight: 600;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+		color: var(--text);
+	}
+	.highlights__text {
+		font-size: 0.9375rem;
+		color: var(--text-soft);
+	}
+</style>

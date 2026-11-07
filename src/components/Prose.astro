@@ -1,0 +1,28 @@
+---
+/**
+ * Body paragraphs at a comfortable reading width.
+ *
+ * Props:
+ *   paragraphs  one string per paragraph
+ */
+interface Props {
+	paragraphs: string[];
+}
+const { paragraphs } = Astro.props;
+---
+
+<div class="prose">
+	{paragraphs.map((p) => <p>{p}</p>)}
+</div>
+
+<style>
+	.prose {
+		display: grid;
+		gap: 1rem;
+		max-width: 68ch;
+	}
+	.prose p {
+		margin: 0;
+		color: var(--text-soft);
+	}
+</style>

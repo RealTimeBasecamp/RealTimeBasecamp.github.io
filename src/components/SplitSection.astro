@@ -1,0 +1,58 @@
+---
+/**
+ * A titled section split into text and a graphic, side by side from tablet
+ * up and stacked (text first) on phones. Alternate `reverse` down a page so
+ * the graphics zigzag and the page is easier to scan.
+ *
+ * Props:
+ *   title    section heading
+ *   reverse  graphic on the left, text on the right
+ *   id       anchor for in-page links
+ *
+ * Slots:
+ *   default  the text
+ *   aside    the graphic
+ */
+interface Props {
+	title: string;
+	reverse?: boolean;
+	id?: string;
+}
+const { title, reverse = false, id } = Astro.props;
+---
+
+<section class:list={['split gutter scroll-animate', { 'split--reverse': reverse }]} id={id}>
+	<div class="split__text">
+		<h2 class="split__title">{title}</h2>
+		<slot />
+	</div>
+	<div class="split__aside">
+		<slot name="aside" />
+	</div>
+</section>
+
+<style>
+	.split {
+		display: grid;
+		gap: 2rem;
+		align-items: center;
+		padding-top: var(--section-gap);
+	}
+	@media (min-width: 48rem) {
+		.split {
+			grid-template-columns: 1.2fr 1fr;
+			gap: 4rem;
+		}
+		/* Swap columns; the text stays first in the markup for reading order. */
+		.split--reverse { grid-template-columns: 1fr 1.2fr; }
+		.split--reverse .split__text { order: 2; }
+	}
+	/* Same heading as Section.astro so split and plain sections match. */
+	.split__title {
+		font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+		line-height: 1.18;
+		letter-spacing: -0.02em;
+		font-weight: 600;
+		margin: 0 0 1rem;
+	}
+</style>

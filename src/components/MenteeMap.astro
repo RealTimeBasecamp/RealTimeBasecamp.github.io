@@ -1,0 +1,120 @@
+---
+/**
+ * World map of where mentees are. The land is a static dot grid
+ * (src/assets/world-dots.svg, generated once from Natural Earth 110m land,
+ * public domain; equirectangular, latitude 78 to -58, 1 unit = 1 degree).
+ * Markers sit on the same projection: smooth accent glows (a radial
+ * gradient, no grain: the user found the noise looked bad), sized by
+ * mentee count so bigger groups dominate.
+ *
+ * Markers fade in, largest first, once the map is well into view. Without
+ * JS or with reduced motion they are simply there. Screen readers get a
+ * plain list of places and counts instead of the picture.
+ */
+import WorldDots from '../assets/world-dots.svg';
+import { MENTEE_LOCATIONS } from '../data/menteeLocations';
+
+/** Projection bounds, matching world-dots.svg. */
+const TOP = 78;
+const HEIGHT = 136;
+const x = (lon: number) => lon + 180;
+const y = (lat: number) => TOP - lat;
+/** Glow radius in map units: area grows with count, so 10 clearly beats 1. */
+const radius = (count: number) => 3 + Math.sqrt(count) * 3.2;
+
+const markers = [...MENTEE_LOCATIONS].sort((a, b) => b.count - a.count);
+const total = MENTEE_LOCATIONS.reduce((sum, { count }) => sum + count, 0);
+---
+
+<figure class="mentee-map">
+	<div class="mentee-map__canvas" aria-hidden="true">
+		<WorldDots class="mentee-map__land" />
+		<svg class="mentee-map__marks" viewBox={`0 0 360 ${HEIGHT}`}>
+			<defs>
+				<radialGradient id="mentee-glow">
+					<stop offset="0" />
+					<stop offset="0.35" stop-opacity="0.55" />
+					<stop offset="1" stop-opacity="0" />
+				</radialGradient>
+			</defs>
+			{markers.map(({ lat, lon, count }, i) => (
+				<g class="mentee-map__mark" style={`--i: ${i}`}>
+					<circle
+						class="mentee-map__glow"
+						cx={x(lon)}
+						cy={y(lat)}
+						r={radius(count)}
+						fill="url(#mentee-glow)"
+					/>
+					<circle class="mentee-map__dot" cx={x(lon)} cy={y(lat)} r="1.1" />
+				</g>
+			))}
+		</svg>
+	</div>
+	<figcaption class="sr-only">
+		Mentees by location ({total} listed):
+		<ul>
+			{markers.map(({ place, count }) => <li>{place}: {count}</li>)}
+		</ul>
+	</figcaption>
+</figure>
+
+<style>
+	.mentee-map {
+		margin: 0;
+	}
+	.mentee-map__canvas {
+		position: relative;
+		aspect-ratio: 360 / 136;
+	}
+	.mentee-map__canvas :global(.mentee-map__land),
+	.mentee-map__marks {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+	}
+	.mentee-map__canvas :global(.mentee-map__land) {
+		color: var(--line);
+	}
+	/* Gradient stops take their colour here so the glow follows the accent. */
+	.mentee-map__marks stop { stop-color: var(--accent); }
+	.mentee-map__glow { opacity: 0.85; }
+	.mentee-map__dot { fill: var(--text); }
+
+	.mentee-map__mark {
+		transform-box: fill-box;
+		transform-origin: center;
+		transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+		transition-delay: calc(var(--i) * 90ms);
+	}
+	.mentee-map.is-pending .mentee-map__mark {
+		opacity: 0;
+		transform: scale(0.4);
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+</style>
+
+<script>
+	/* Play once the map is mostly in view; reduced motion keeps it static. */
+	const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+	document.querySelectorAll<HTMLElement>('.mentee-map').forEach((map) => {
+		if (!motionOk || !('IntersectionObserver' in window)) return;
+		map.classList.add('is-pending');
+		const observer = new IntersectionObserver(([entry]) => {
+			if (!entry.isIntersecting) return;
+			observer.disconnect();
+			map.classList.remove('is-pending');
+		}, { threshold: 0.5 });
+		observer.observe(map);
+	});
+</script>

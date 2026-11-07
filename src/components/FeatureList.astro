@@ -1,0 +1,52 @@
+---
+/**
+ * A grid of short titled points as cards, two across from tablet up and
+ * one column on phones.
+ *
+ * Props:
+ *   items  { title, text }[]
+ */
+interface Props {
+	items: { title: string; text: string }[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="features">
+	{items.map(({ title, text }) => (
+		<li class="features__card">
+			<h3 class="features__title">{title}</h3>
+			<p class="features__text">{text}</p>
+		</li>
+	))}
+</ul>
+
+<style>
+	.features {
+		display: grid;
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	@media (min-width: 48rem) {
+		.features { grid-template-columns: repeat(2, 1fr); }
+	}
+	.features__card {
+		display: grid;
+		align-content: start;
+		gap: 0.5rem;
+		padding: 1.5rem;
+		border: 1px solid var(--line);
+		border-radius: 6px;
+		background: var(--surface);
+	}
+	.features__title {
+		font-size: 1.0625rem;
+		line-height: 1.3;
+	}
+	.features__text {
+		margin: 0;
+		color: var(--text-soft);
+	}
+</style>

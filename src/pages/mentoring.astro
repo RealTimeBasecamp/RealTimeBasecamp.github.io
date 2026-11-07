@@ -1,13 +1,67 @@
 ---
 /**
- * Mentoring page. Stub: content still to be planned
- * (tracked in .claude/chats/personal-site/features/09-navigation.md).
+ * Mentoring page: the user's MentorCruise bio, mentoring stats, reviews,
+ * the mentee world map (Feat-08) and a freelance call to action.
+ * Tracked in .claude/chats/personal-site/features/09-navigation.md.
  * Lives on the dev branch, never main, until it is finished.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/Section.astro';
+import Stats from '../components/Stats.astro';
+import Prose from '../components/Prose.astro';
+import SplitSection from '../components/SplitSection.astro';
+import HighlightCards from '../components/HighlightCards.astro';
+import StepsGraphic from '../components/StepsGraphic.astro';
+import FeatureList from '../components/FeatureList.astro';
+import TestimonialCarousel from '../components/TestimonialCarousel.astro';
+import MenteeMap from '../components/MenteeMap.astro';
+import CallToAction from '../components/CallToAction.astro';
+import ProfileHero from '../components/ProfileHero.astro';
+import { MENTORING_STATS } from '../data/stats';
+import { APPROACH, EXPECT, MENTOR_SKILLS, MENTORING_INTRO, WHY_ME } from '../data/mentoring';
+import { PROFILE_ACTIONS } from '../data/profile';
+import { MENTORCRUISE_URL } from '../data/links';
+import { BOOK_CTA, BUILD_FOR_YOU_CTA } from '../data/cta';
+import { CONTACT_LINK } from '../data/nav';
 ---
 
 <BaseLayout title="Mentoring | Rob Fraser" description="Mentoring with Rob Fraser.">
-	<Section title="Mentoring" />
+	<ProfileHero
+		primary={{ href: MENTORCRUISE_URL, label: PROFILE_ACTIONS.book, external: true }}
+		skills={MENTOR_SKILLS}
+		intro={MENTORING_INTRO}
+	/>
+
+	<Section>
+		<Stats items={MENTORING_STATS} />
+	</Section>
+
+	<SplitSection title={WHY_ME.title}>
+		<Prose paragraphs={WHY_ME.paragraphs} />
+		<HighlightCards slot="aside" items={WHY_ME.highlights} />
+	</SplitSection>
+
+	<SplitSection title={APPROACH.title} reverse>
+		<Prose paragraphs={APPROACH.paragraphs} />
+		<StepsGraphic slot="aside" steps={APPROACH.steps} />
+	</SplitSection>
+
+	<Section title={EXPECT.title}>
+		<FeatureList items={EXPECT.items} />
+		<CallToAction {...BOOK_CTA} href={MENTORCRUISE_URL} external />
+	</Section>
+
+	<Section>
+		<TestimonialCarousel />
+	</Section>
+
+	<Section title="Where my mentees are">
+		<MenteeMap />
+	</Section>
+
+	{CONTACT_LINK && (
+		<Section>
+			<CallToAction {...BUILD_FOR_YOU_CTA} href={CONTACT_LINK.href} />
+		</Section>
+	)}
 </BaseLayout>
