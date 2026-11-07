@@ -9,6 +9,7 @@
 
 ## Implementation Checklist
 * [ ] User: github.io repo > Settings > Pages > Source > **GitHub Actions**
+* [ ] User: [Feat-02a: welcome email](./02a-welcome-email.md) rewritten and re-enabled (disabled 2026-11-02)
 * [ ] User approves the push, then push `main`
 * [ ] Actions run is green; `/`, `/emsp/` and `/ue5-editor-menu-shelf-pro/` load
 * [ ] Push the uncommitted "Website:" link in `D:\Portfolio\WebDev\realtimebasecamp` (profile README), with the user's approval

@@ -22,6 +22,6 @@
 
 
 # User Feedback
-
+- What is the best way to create blogs easily? I want it to be easy to quickly write them up. Are my options to use astro md files and format the blogs that way so they load into astro docs like the emsp docs pages or is there a more native way like writting a notion page/medium blog? I want to prioritise SEO and keywords etc.
 
 # Final review & Tests
